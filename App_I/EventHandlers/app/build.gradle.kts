@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.testapp"
-    compileSdk = 34
+    namespace = "com.example.eventhandlers"
+    compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.example.testapp"
+        applicationId = "com.example.eventhandlers"
         minSdk = 24
         targetSdk = 33
         versionCode = 1

@@ -1,33 +1,14 @@
-package com.example.testapp;
+package com.example.eventhandlers;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.util.Log;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Create view programmatically:
-        /**
-        LinearLayout l = new LinearLayout(this);
-        TextView txt = new TextView(this);
-        Button btn = new Button(this);
-        l.setOrientation(LinearLayout.VERTICAL);
-        txt.setText("Test");
-        btn.setText("KNAP");
-        l.addView(txt);
-        l.addView(btn);
-        setContentView(l);
-        **/
-
-        // NOTE: The below code includes the first exercises
         setContentView(R.layout.activity_main);
         Button click_button = (Button) findViewById(R.id.count_click);
 
@@ -56,8 +37,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
-
 }
