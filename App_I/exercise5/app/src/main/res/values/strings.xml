@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">exercise5</string>
+    <string name="game_over">You\'re dead!</string>
+    <string name="game_on">You got out with yor life intact!</string>
+</resources>
