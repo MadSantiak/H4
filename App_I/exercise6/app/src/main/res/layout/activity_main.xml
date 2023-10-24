@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/greet"
+        android:textSize="25dp" />
+
+    <TextView
+        android:id="@+id/txtChosen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choice:" />
+
+    <RadioGroup
+        android:id="@+id/choices"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/choice_one"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choice #1" />
+
+        <RadioButton
+            android:id="@+id/choice_two"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choice #2" />
+
+        <RadioButton
+            android:id="@+id/choice_three"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choice #3" />
+
+        <RadioButton
+            android:id="@+id/choice_four"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choice #4" />
+    </RadioGroup>
+
+</LinearLayout>
