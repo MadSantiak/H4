@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">calc_same</string>
+    <string name="operation">Add</string>
+</resources>
