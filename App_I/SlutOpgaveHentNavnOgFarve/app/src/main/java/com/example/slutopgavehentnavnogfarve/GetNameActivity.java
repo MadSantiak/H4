@@ -40,7 +40,22 @@ public class GetNameActivity extends AppCompatActivity implements View.OnClickLi
         if (relType != null & relName != null)
         {
             nameLabel.setText(relType + "'s name:");
-            
+            switch (relType)
+            {
+                case "Mother":
+                    radGroup.check(R.id.radMother);
+                    break;
+                case "Father":
+                    radGroup.check(R.id.radFather);
+                    break;
+                case "Cat":
+                    radGroup.check(R.id.radCat);
+                    break;
+                case "Dog":
+                    radGroup.check(R.id.radDog);
+                    break;
+            }
+            nameField.setText(relName);
         }
 
         radGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {

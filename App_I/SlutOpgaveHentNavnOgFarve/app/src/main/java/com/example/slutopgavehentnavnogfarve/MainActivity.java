@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnName, btnColor;
     TextView nameRes;
     String relationType, relationName;
-    String strRed, strGreen, strBlue;
+    String strRed, strGreen, strBlue = "00";
     ActivityResultLauncher<Intent> nameActivityLauncher, colorActivityLauncher;
 
     @Override
@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
         btnName = findViewById(R.id.btnName);
         btnColor = findViewById(R.id.btnColor);
         nameRes = findViewById(R.id.nameRes);
-
 
 
         btnName.setOnClickListener(new View.OnClickListener() {
@@ -50,9 +49,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent colorIntent = new Intent(MainActivity.this, GetColorActivity.class);
+                colorIntent.putExtra("r", strRed);
+                colorIntent.putExtra("g", strGreen);
+                colorIntent.putExtra("b", strBlue);
                 if (relationName != null)
                 {
                     colorIntent.putExtra("relationType", relationType);
+
                 }
                 colorActivityLauncher.launch(colorIntent);
             }

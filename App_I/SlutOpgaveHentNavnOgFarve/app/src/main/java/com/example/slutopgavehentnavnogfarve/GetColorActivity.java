@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.Arrays;
+
 public class GetColorActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     TextView typeTitle, colorSample;
@@ -27,10 +29,9 @@ public class GetColorActivity extends AppCompatActivity implements AdapterView.O
             "00", "10", "20", "30", "40", "50", "60", "70", "80", "90","A0", "B0", "C0", "D0", "E0", "F0", "FF"
             };
 
-    Color colorCode;
     String strColorCode;
     // For some reason serial-initialization caused one value to become null(?)
-    String strRed, strBlue, strGreen;
+    String strRed, strBlue, strGreen, strType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,12 +42,10 @@ public class GetColorActivity extends AppCompatActivity implements AdapterView.O
         btnSendColor = findViewById(R.id.btnSendColor);
         mainIntent = getIntent();
 
-        String strType = mainIntent.getStringExtra("relationType");
+        getExtras();
+
         typeTitle.setText((strType != null) ? strType + "'s Color" : "Color");
-        //typeTitle.setText(strType + "'s Color");
-        strRed = "00";
-        strBlue = "00";
-        strGreen = "00";
+
         redSpn = findViewById(R.id.redSpn);
         greenSpn = findViewById(R.id.greenSpn);
         blueSpn = findViewById(R.id.blueSpn);
@@ -57,6 +56,10 @@ public class GetColorActivity extends AppCompatActivity implements AdapterView.O
         redSpn.setAdapter(adapter);
         greenSpn.setAdapter(adapter);
         blueSpn.setAdapter(adapter);
+
+        redSpn.setSelection(adapter.getPosition(strRed));
+        greenSpn.setSelection(adapter.getPosition(strGreen));
+        blueSpn.setSelection(adapter.getPosition(strBlue));
 
         redSpn.setOnItemSelectedListener(this);
         greenSpn.setOnItemSelectedListener(this);
@@ -74,6 +77,18 @@ public class GetColorActivity extends AppCompatActivity implements AdapterView.O
         });
     }
 
+    public void getExtras() {
+        strType = mainIntent.getStringExtra("relationType");
+        String r = mainIntent.getStringExtra("r");
+        strRed = (r != null) ? r : "00";
+
+        String g = mainIntent.getStringExtra("g");
+        strGreen = (g != null) ? g : "00";
+
+        String b = mainIntent.getStringExtra("b");
+        strBlue = (b != null) ? b : "00";
+
+    }
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         if (adapterView == redSpn)
@@ -89,10 +104,6 @@ public class GetColorActivity extends AppCompatActivity implements AdapterView.O
             strBlue = adapterView.getItemAtPosition(i).toString();
         }
         strColorCode = "#" + strRed + strGreen + strBlue;
-        Log.d("Red", strRed);
-        Log.d("Green", strGreen);
-        Log.d("Blue", strBlue);
-        Log.d("Code", strColorCode);
         colorSample.setBackgroundColor(Color.parseColor(strColorCode));
         colorSample.setText(strColorCode);
     }
