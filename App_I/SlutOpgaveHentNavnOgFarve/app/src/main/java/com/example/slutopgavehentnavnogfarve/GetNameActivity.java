@@ -19,7 +19,7 @@ public class GetNameActivity extends AppCompatActivity implements View.OnClickLi
     TextView nameLabel;
     EditText nameField;
     Button btnSendName;
-
+    String relType, relName;
     Intent mainIntent;
 
     @Override
@@ -32,11 +32,22 @@ public class GetNameActivity extends AppCompatActivity implements View.OnClickLi
         nameField = findViewById(R.id.nameField);
         btnSendName = findViewById(R.id.btnSendName);
 
+        mainIntent = getIntent();
+
+        relType = mainIntent.getStringExtra("type");
+        relName = mainIntent.getStringExtra("name");
+
+        if (relType != null & relName != null)
+        {
+            nameLabel.setText(relType + "'s name:");
+            
+        }
+
         radGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 RadioButton radBtn = radioGroup.findViewById(i);
-                String relType = radBtn.getText().toString();
+                relType = radBtn.getText().toString();
                 nameLabel.setText(relType + "'s name:");
             }
         });
@@ -48,14 +59,17 @@ public class GetNameActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View view) {
         if (view == btnSendName)
         {
-            String relType = nameLabel.getText().toString();
-            String relName = nameField.getText().toString();
+            int intSelectedBtn = radGroup.getCheckedRadioButtonId();
+            RadioButton checkedButton = findViewById(intSelectedBtn);
+            relType = checkedButton.getText().toString();
+            relName = nameField.getText().toString();
 
             Log.d("Type", relType);
             Log.d("Name", relName);
             mainIntent.putExtra("nameLabel", relType);
             mainIntent.putExtra("nameField", relName);
             setResult(Activity.RESULT_OK, mainIntent);
+            Log.d("State", "Done");
             finish();
         }
     }

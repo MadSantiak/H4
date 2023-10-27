@@ -8,7 +8,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -17,7 +19,8 @@ public class MainActivity extends AppCompatActivity {
 
     Button btnName, btnColor;
     TextView nameRes;
-
+    String relationType, relationName;
+    String strRed, strGreen, strBlue;
     ActivityResultLauncher<Intent> nameActivityLauncher, colorActivityLauncher;
 
     @Override
@@ -29,10 +32,16 @@ public class MainActivity extends AppCompatActivity {
         btnColor = findViewById(R.id.btnColor);
         nameRes = findViewById(R.id.nameRes);
 
+
+
         btnName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent nameIntent = new Intent(MainActivity.this, GetNameActivity.class);
+
+                nameIntent.putExtra("name", relationName);
+                nameIntent.putExtra("type", relationType);
+
                 nameActivityLauncher.launch(nameIntent);
             }
         });
@@ -41,6 +50,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent colorIntent = new Intent(MainActivity.this, GetColorActivity.class);
+                if (relationName != null)
+                {
+                    colorIntent.putExtra("relationType", relationType);
+                }
                 colorActivityLauncher.launch(colorIntent);
             }
         });
@@ -53,9 +66,9 @@ public class MainActivity extends AppCompatActivity {
                         if (o.getResultCode() == Activity.RESULT_OK)
                         {
                             Intent res = o.getData();
-                            String nameLabel = res.getStringExtra("nameLabel");
-                            String nameField = res.getStringExtra("nameField");
-                            String nameResult = nameLabel + " " + nameField;
+                            relationType = res.getStringExtra("nameLabel");
+                            relationName = res.getStringExtra("nameField");
+                            String nameResult = relationType + "'s name: " + relationName;
                             nameRes.setText(nameResult);
                         }
                         else
@@ -73,6 +86,15 @@ public class MainActivity extends AppCompatActivity {
                         if (o.getResultCode() == Activity.RESULT_OK)
                         {
                             Intent res = o.getData();
+                            strRed = res.getStringExtra("r");
+                            strGreen = res.getStringExtra("g");
+                            strBlue = res.getStringExtra("b");
+                            String strColorCode = "#" + strRed + strGreen + strBlue;
+                            Log.d("Red", strRed);
+                            Log.d("Green", strGreen);
+                            Log.d("Blue", strBlue);
+                            Log.d("Code", strColorCode);
+                            nameRes.setBackgroundColor(Color.parseColor(strColorCode));
                         }
                         else
                         {

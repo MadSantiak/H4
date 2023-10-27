@@ -1,9 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GetColorActivity">
+    tools:context=".GetColorActivity"
+    android:layout_gravity="center_horizontal|center_vertical"
+    android:columnCount="3"
+    android:rowCount="4"
+    android:columnOrderPreserved="true">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="25dp"
+        android:padding="15dp"
+        android:id="@+id/typeTitle"
+        android:layout_column="0"
+        android:layout_row="0"
+        android:layout_columnSpan="3"
+        android:layout_gravity="center_horizontal"
+       />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/colorSample"
+        android:layout_column="0"
+        android:layout_row="1"
+        android:layout_columnSpan="3"
+        android:height="55dp"
+        android:layout_gravity="fill_horizontal"
+        android:gravity="center_horizontal"
+        />
+    <LinearLayout
+        android:layout_column="0"
+        android:layout_row="2"
+        android:layout_columnSpan="3"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal">
+        <TextView
+            android:layout_height="wrap_content"
+            android:text="Red"
+            android:layout_width="wrap_content"/>
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/redSpn"
+            android:layout_gravity="center_horizontal"/>
+
+        <TextView
+            android:text="Green"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/greenSpn"
+            android:layout_gravity="center_horizontal"/>
+
+        <TextView
+            android:text="Blue"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/blueSpn"
+            android:layout_gravity="center_horizontal"/>
+    </LinearLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnSendColor"
+        android:text="SEND COLOR"
+        android:layout_column="0"
+        android:layout_row="3"
+        android:layout_columnSpan="3"
+        android:layout_gravity="center_horizontal"/>
+</GridLayout>
