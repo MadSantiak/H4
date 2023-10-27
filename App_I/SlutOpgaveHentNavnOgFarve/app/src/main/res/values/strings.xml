@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">SlutOpgaveHentNavnOgFarve</string>
+    <string name="name_btn">GET ONES NAME</string>
+    <string name="color_btn">GET ONES COLOR</string>
+    <string name="mother">Mother</string>
+    <string name="father">Father</string>
+    <string name="cat">Cat</string>
+    <string name="dog">Dog</string>
+</resources>

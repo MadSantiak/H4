@@ -33,6 +33,10 @@ public class TodoAdapter extends ArrayAdapter<Todo> {
         {
             view.setBackgroundResource(R.color.grey);
         }
+        else
+        {
+            view.setBackgroundResource(R.color.lightgrey);
+        }
 
         TextView description = (TextView) view.findViewById(R.id.description);
         TextView person = (TextView) view.findViewById(R.id.person);
