@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnName, btnColor;
     TextView nameRes;
     String relationType, relationName;
-    String strRed, strGreen, strBlue = "00";
+    String strRed, strGreen, strBlue;
     ActivityResultLauncher<Intent> nameActivityLauncher, colorActivityLauncher;
 
     @Override
