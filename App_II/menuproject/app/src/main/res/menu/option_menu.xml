@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:title="Pause"
+        android:id="@+id/menuPause"/>
+    <item
+        android:title="Ikke Pause"
+        android:id="@+id/menuIkkePause"/>
+    <item
+        android:title="Måske Pause"
+        android:id="@+id/menuMåskePause"/>
+
+</menu>
