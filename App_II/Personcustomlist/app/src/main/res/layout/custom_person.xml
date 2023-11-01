@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="15dp">
+
+        <ImageView
+            android:id="@+id/imgPerson"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:scaleType="fitCenter" />
+
+        <LinearLayout
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="2.5"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="25dp" />
+
+            <TextView
+                android:id="@+id/txtAge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="25dp" />
+
+            <Button
+                android:id="@+id/btnDel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="DELETE" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#0000ff" />
+
+</LinearLayout>
