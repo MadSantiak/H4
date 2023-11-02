@@ -2,6 +2,7 @@ package dk.tec.maso41.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -34,20 +35,21 @@ public class ProjectServlet extends HttpServlet {
 		out.write("\n....mapper");
 		DBTools db = new DBTools();
 		out.write("\n....db");
-		out.write("\n Getting Persons");
+		out.write("\n Getting Person(s)");
+		
+	
 		switch (analyze.getMatch()) {
-		case MatchPersonId:
-			Person p = db.getPersonById(analyze.getId());
-			out.write("\n" + mapper.writeValueAsString(p));
-			break;
-		case MatchPerson:
-			out.write("\nA Person?..");
-			break;
-		case MatchNo:
-			out.write("\nNo such person..");
-			break;
+			case MatchPersonId:
+				Person p = db.getPersonById(analyze.getId());
+				out.write("\n" + mapper.writeValueAsString(p));
+				break;
+			case MatchPerson:
+				break;
+			case MatchNo:
+				out.write("\nNo such person..");
+				break;
+			}
 		}
-	}
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

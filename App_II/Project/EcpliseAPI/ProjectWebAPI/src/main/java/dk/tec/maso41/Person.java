@@ -11,8 +11,7 @@ public class Person {
 //	ProgLang proglang
 	
 	public Person() {};
-	public Person(int id, String name, String phone, String address) {
-		super();
+	public Person(String name, String phone, String address) {
 		this.name = name;
 		this.phone = phone;
 		this.address = address;
@@ -42,9 +41,7 @@ public class Person {
 	public void setAddress(String address) {
 		this.address = address;
 	}
-	private void getFavorite() {
-		// TODO Auto-generated method stub
-	}
+
 	public void setFavorite(boolean favorite) {
 		this.favorite = favorite;
 	}

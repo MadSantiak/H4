@@ -5,8 +5,8 @@ import java.util.regex.Pattern;
 
 public class AnalyzeRequest {
 
-	MatchEnum match;
-	int id;
+	private MatchEnum match;
+	private int id;
 	
 	public MatchEnum getMatch() {
 		return match;
