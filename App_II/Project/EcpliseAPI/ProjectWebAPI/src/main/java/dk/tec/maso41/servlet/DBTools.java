@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import dk.tec.maso41.Person;
 
@@ -51,7 +53,8 @@ public class DBTools
 				person.setName(result.getString("Name"));
 				person.setAddress(result.getString("Address"));
 				person.setPhone(result.getString("Phone"));
-				
+				person.setNote(result.getString("Note"));
+				person.setFavorite(result.getBoolean("Favorite"));
 				con.close();
 			}
 			
@@ -59,7 +62,34 @@ public class DBTools
 			
 			e.printStackTrace();
 		}
-		
+		System.out.print(person.toString());
 		return person;
 	}	
+	
+	public List<Person> getAllPerson() {
+		connect();
+		String selectStr = "SELECT * FROM Person";
+		List<Person> people = new ArrayList<>();
+		System.out.print(selectStr);
+		try {
+	        ResultSet result = stmt.executeQuery(selectStr);
+	        while (result.next()) {
+	            Person person = new Person();
+	            person.setId(result.getInt("Id"));
+	            person.setName(result.getString("Name"));
+	            person.setAddress(result.getString("Address"));
+	            person.setPhone(result.getString("Phone"));
+				person.setNote(result.getString("Note"));
+				person.setFavorite(result.getBoolean("Favorite"));
+	            people.add(person);
+	        	}
+	
+	        con.close();
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    }
+	
+		    return people;
+		
+	}
 }

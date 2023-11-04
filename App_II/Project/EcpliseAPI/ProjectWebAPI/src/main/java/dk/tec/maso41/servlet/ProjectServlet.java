@@ -3,6 +3,8 @@ package dk.tec.maso41.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.List;
+import java.io.BufferedReader;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,36 +16,34 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dk.tec.maso41.AnalyzeRequest;
 import dk.tec.maso41.Person;
-
+import java.util.logging.Logger;
 public class ProjectServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
 
 		// Alternative to the above:
 		PrintWriter out = response.getWriter();
-		out.print("\n Context Path:" + request.getContextPath());
-		out.write("\n Path Info:" + request.getPathInfo());
-		out.write("\n Servlet Path:" + request.getServletPath());
-		out.write("\n....");
 		AnalyzeRequest analyze = new AnalyzeRequest(request.getPathInfo());
-		out.write("\n....analyzer");
 		ObjectMapper mapper = new ObjectMapper();
-		out.write("\n....mapper");
 		DBTools db = new DBTools();
-		out.write("\n....db");
-		out.write("\n Getting Person(s)");
+		System.out.println("GET REQUEST");
+		System.out.println(request);
 		
-	
 		switch (analyze.getMatch()) {
 			case MatchPersonId:
 				Person p = db.getPersonById(analyze.getId());
-				out.write("\n" + mapper.writeValueAsString(p));
+				String json = mapper.writeValueAsString(p);
+				System.out.println("BY ID: "+ json);
+				out.print(json);
 				break;
 			case MatchPerson:
+				List<Person> people = db.getAllPerson();
+				String jsonAll = mapper.writeValueAsString(people);
+				System.out.println(jsonAll);
+				out.print(jsonAll);
 				break;
 			case MatchNo:
 				out.write("\nNo such person..");
@@ -53,7 +53,10 @@ public class ProjectServlet extends HttpServlet {
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String recJSON = req.getReader().readLine();
+		
+		BufferedReader reader = req.getReader();
+		String recJSON = reader.readLine();
+		System.out.println(recJSON);
 		ObjectMapper mapper = new ObjectMapper();
 		Person p = mapper.readValue(recJSON, Person.class);
 		System.out.println(p.getName());

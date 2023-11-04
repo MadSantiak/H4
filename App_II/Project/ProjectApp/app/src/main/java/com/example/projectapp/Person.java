@@ -1,34 +1,45 @@
 package com.example.projectapp;
 
 public class Person {
+    int id;
     String name;
-    String address;
     String phone;
+    String address;
     String note;
-    Boolean favorite;
+    boolean favorite = false;
+//	Haircolor haircolor
+//	ProgLang proglang
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
+    public Person() {};
+    public Person(String name, String phone, String address) {
         this.name = name;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
+        this.phone = phone;
         this.address = address;
     }
 
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
     public String getPhone() {
         return phone;
     }
-
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+    public String getAddress() {
+        return address;
+    }
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getNote() {
@@ -39,11 +50,8 @@ public class Person {
         this.note = note;
     }
 
-    public Boolean getFavorite() {
-        return favorite;
-    }
-
-    public void setFavorite(Boolean favorite) {
+    public void setFavorite(boolean favorite) {
         this.favorite = favorite;
     }
+    public boolean getFavorite() { return favorite; }
 }
