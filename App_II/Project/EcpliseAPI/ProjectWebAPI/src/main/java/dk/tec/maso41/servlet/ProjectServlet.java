@@ -1,6 +1,7 @@
 package dk.tec.maso41.servlet;
 
 import java.io.IOException;
+
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,20 +18,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.tec.maso41.AnalyzeRequest;
 import dk.tec.maso41.Person;
 import java.util.logging.Logger;
+
 public class ProjectServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-
-		// Alternative to the above:
+		/**
+		 * Allows the API to call get-methods.
+		 * Using AnalyzeRequest to parse whether the request is asking for "All Persons"
+		 * or a specific recordset.
+		 * Using ObjectMapper to write the data in the response to be read by the
+		 * App's ApiLayer.
+		 */
 		PrintWriter out = response.getWriter();
 		AnalyzeRequest analyze = new AnalyzeRequest(request.getPathInfo());
 		ObjectMapper mapper = new ObjectMapper();
 		DBTools db = new DBTools();
-		System.out.println("GET REQUEST");
-		System.out.println(request);
 		
 		switch (analyze.getMatch()) {
 			case MatchPersonId:
@@ -53,13 +57,42 @@ public class ProjectServlet extends HttpServlet {
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		
+		/**
+		 * Allows the App to call the API and essentially create a Person object
+		 * via the DBTools addPerson() function.
+		 */
+		DBTools db = new DBTools();
 		BufferedReader reader = req.getReader();
 		String recJSON = reader.readLine();
 		System.out.println(recJSON);
 		ObjectMapper mapper = new ObjectMapper();
 		Person p = mapper.readValue(recJSON, Person.class);
-		System.out.println(p.getName());
-		
+		db.addPerson(p);
 	}
+
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		/**
+		 * Allows the App to call the API and then, via the DBtools class
+		 * instruct the database to remove the row with the ID fetched from the 
+		 * Person object in question, passed along in the Path of the request,
+		 * which is finally extracted using the AnalyseRequest class.
+		 */
+		AnalyzeRequest analyze = new AnalyzeRequest(req.getPathInfo());
+		ObjectMapper mapper = new ObjectMapper();
+		DBTools db = new DBTools();
+		db.delPerson(analyze.getId());
+	}
+
+	@Override
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		AnalyzeRequest analyze = new AnalyzeRequest(req.getPathInfo());
+		ObjectMapper mapper = new ObjectMapper();
+		DBTools db = new DBTools();
+		BufferedReader reader = req.getReader();
+		String updJSON = reader.readLine();
+		Person p = mapper.readValue(updJSON, Person.class);
+		db.updatePerson(p);
+	}
+	
 }

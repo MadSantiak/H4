@@ -17,6 +17,13 @@ public class Person {
         this.phone = phone;
         this.address = address;
     }
+    public Person(String name, String phone, String address, String note, boolean favorite) {
+        this.name = name;
+        this.phone = phone;
+        this.address = address;
+        this.note = note;
+        this.favorite = favorite;
+    }
 
     public int getId() {
         return id;

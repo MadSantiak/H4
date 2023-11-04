@@ -1,5 +1,6 @@
 package com.example.projectapp;
 
+import android.app.Service;
 import android.util.Log;
 
 import java.io.IOException;
@@ -24,7 +25,6 @@ public class ApiLayer {
                 Call<Person> req = serv.getPersonById(id);
                 try {
                     p = req.execute().body();
-                    Log.d("Person:", p.toString());
                 } catch (IOException e) {
                     e.printStackTrace();
                     Log.d("ApiLayer", "Failed to fetch data.");
@@ -40,32 +40,24 @@ public class ApiLayer {
         } catch (Exception e) {
             Log.d("Thread", e.getMessage());
         }
-        Log.d("Perosn", person.toString());
         return person;
     }
 
     public static List<Person> getAllPerson() {
-        Log.d("getAllPerson", "Start");
         FutureTask<List<Person>> futureTask = new FutureTask<>(new Callable<List<Person>>() {
             @Override
             public List<Person> call() throws Exception {
-                Log.d("getAllPerson", "call");
                 List<Person> people = null;
                 IPersonService serv = ServiceBuilder.buildService(IPersonService.class);
                 Call<List<Person>> request = serv.getAllPerson();
-                Log.d("getAllPerson", "trying");
                 try {
-                    Log.d("getAllPerson", "getting people");
                     people = request.execute().body();
-                    Log.d("getAllPerson", "got people");
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Log.d("getAllPerson", "Failed");
                 }
                 return people;
             }
         });
-        Log.d("getAllPerson", "Thread");
         Thread t = new Thread(futureTask);
         t.start();
         List<Person> people = null;
@@ -73,8 +65,87 @@ public class ApiLayer {
             people = futureTask.get();
             Log.d("People get", people.toString());
         } catch (Exception e) {
-            Log.d("Thread ahoy", e.getMessage());
         }
         return people;
     }
+
+    public static void addPerson(Person person)
+    {
+        FutureTask<Void> futureTask = new FutureTask<>(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                IPersonService serv = ServiceBuilder.buildService(IPersonService.class);
+
+                Call<Void> req = serv.addPerson(person);
+                try {
+                    Response<Void> response = req.execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            return null;
+            }
+        });
+    Thread t = new Thread(futureTask);
+    t.start();
+
+    try {
+        futureTask.get();
+    } catch (Exception e) {
+        Log.e("Thread error:", e.getMessage());
+        }
+    }
+
+    public static void delPerson(int id)
+    {
+        FutureTask<Void> futureTask = new FutureTask<>(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                IPersonService serv = ServiceBuilder.buildService(IPersonService.class);
+
+                Call<Void> req = serv.delPerson(id);
+                try {
+                    Response<Void> response = req.execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        });
+        Thread t = new Thread(futureTask);
+        t.start();
+
+        try {
+            futureTask.get();
+        } catch (Exception e) {
+            Log.e("Thread error:", e.getMessage());
+        }
+    }
+
+    public static void updatePerson(Person person)
+    {
+        FutureTask<Void> futureTask = new FutureTask<>(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                IPersonService serv = ServiceBuilder.buildService(IPersonService.class);
+
+                Call<Void> req = serv.updatePerson(person);
+                try {
+                    Response<Void> response = req.execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        });
+        Thread t = new Thread(futureTask);
+        t.start();
+
+        try {
+            futureTask.get();
+        } catch (Exception e) {
+            Log.e("Thread error:", e.getMessage());
+        }
+    }
+
+
 }

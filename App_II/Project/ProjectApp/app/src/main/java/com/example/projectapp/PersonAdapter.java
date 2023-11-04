@@ -3,6 +3,7 @@ package com.example.projectapp;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.activity.result.ActivityResultLauncher;
 
 import java.util.List;
 
@@ -23,10 +26,26 @@ public class PersonAdapter extends BaseAdapter {
     TextView txtName,txtPhone,txtAddress,txtNote;
     CheckBox isFavorite;
 
+    Button btnDel, btnEdit;
+
+    ActivityResultLauncher<Intent> editPersonActivityLauncher;
+
     public PersonAdapter(List<Person> listPpl, MainActivity main)
     {
         this.listPpl = listPpl;
         this.main = main;
+    }
+
+    public PersonAdapter(List<Person> listPpl, MainActivity main, ActivityResultLauncher editPersonActivityLauncher)
+    {
+        this.listPpl = listPpl;
+        this.main = main;
+        this.editPersonActivityLauncher = editPersonActivityLauncher;
+    }
+
+    public void updateListPpl(List<Person> listPpl) {
+        listPpl.clear();
+        listPpl.addAll(listPpl);
     }
 
     @Override
@@ -70,7 +89,9 @@ public class PersonAdapter extends BaseAdapter {
         isFavorite = v.findViewById(R.id.isFavorite);
         isFavorite.setChecked(person.getFavorite());
 
-        Button btnDel = v.findViewById(R.id.btnDel);
+        btnDel = v.findViewById(R.id.btnDel);
+        btnEdit = v.findViewById(R.id.btnEdit);
+
         btnDel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,7 +103,8 @@ public class PersonAdapter extends BaseAdapter {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         int removeAt = position;
-                        Person delPerson = listPpl.remove(removeAt);
+                        listPpl.remove(removeAt);
+                        ApiLayer.delPerson(person.getId());
                         notifyDataSetChanged();
                     }
                 });
@@ -96,6 +118,16 @@ public class PersonAdapter extends BaseAdapter {
                 alert.show();
             }
         });
+        btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent editIntent = new Intent(main, EditPersonActivity.class);
+                editIntent.putExtra("person", person);
+                editPersonActivityLauncher.launch(editIntent);
+            }
+        });
+
+
 
         return v;
     }
