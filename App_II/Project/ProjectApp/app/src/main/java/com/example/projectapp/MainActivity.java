@@ -11,9 +11,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ListView;
 
+import com.example.projectapp.controllers.ApiLayer;
+import com.example.projectapp.person.AddPersonActivity;
+import com.example.projectapp.person.Person;
+import com.example.projectapp.person.PersonAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;

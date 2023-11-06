@@ -17,19 +17,27 @@ public class AnalyzeRequest {
 	}
 	
 	public AnalyzeRequest(String pathInfo) {
-		Matcher matcher = Pattern.compile("/Person/([0-9]+)").matcher(pathInfo);
-		System.out.print(pathInfo);
-		if (matcher.find()) {
+		Matcher personMatcher = Pattern.compile("/Person/([0-9]+)").matcher(pathInfo);
+		Matcher colorMatcher = Pattern.compile("/Haircolor/([0-9]+)").matcher(pathInfo);
+		
+		if (personMatcher.find()) {
 			match = MatchEnum.MatchPersonId;
-			id = Integer.parseInt(matcher.group(1));
-		} else {
-			matcher = Pattern.compile("/Person").matcher(pathInfo);
-			if (matcher.find()) {
+			id = Integer.parseInt(personMatcher.group(1));
+		} else if (colorMatcher.find()) {
+			match = MatchEnum.MatchHaircolorId;
+			id = Integer.parseInt(colorMatcher.group(1));
+		} else	{
+			personMatcher = Pattern.compile("/Person").matcher(pathInfo);
+			colorMatcher = Pattern.compile("/Haircolor").matcher(pathInfo);
+			if (personMatcher.find()) {
 				match = MatchEnum.MatchPerson;
+			} else if (colorMatcher.find()) {
+				match = MatchEnum.MatchHaircolor;
 			} else {
 				match = MatchEnum.MatchNo;
 			}
-		}
+		} 
+		
 		
 		
 	}

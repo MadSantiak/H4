@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import dk.tec.maso41.Haircolor;
 import dk.tec.maso41.Person;
 
 public class DBTools 
@@ -46,7 +47,6 @@ public class DBTools
 		 */
 		connect();
 		String selectStr = "Select * from Person where id = " + id;
-		System.out.print(selectStr);
 		Person person = new Person();
 		
 		try {
@@ -59,6 +59,7 @@ public class DBTools
 				person.setPhone(result.getString("Phone"));
 				person.setNote(result.getString("Note"));
 				person.setFavorite(result.getBoolean("Favorite"));
+				person.setHaircolor_id(result.getInt("Haircolor_id"));
 				con.close();
 			}
 			
@@ -78,7 +79,6 @@ public class DBTools
 		connect();
 		String selectStr = "SELECT * FROM Person";
 		List<Person> people = new ArrayList<>();
-		System.out.print(selectStr);
 		try {
 	        ResultSet result = stmt.executeQuery(selectStr);
 	        while (result.next()) {
@@ -89,6 +89,7 @@ public class DBTools
 	            person.setPhone(result.getString("Phone"));
 				person.setNote(result.getString("Note"));
 				person.setFavorite(result.getBoolean("Favorite"));
+				person.setHaircolor_id(result.getInt("Haircolor_id"));
 	            people.add(person);
 	        	}
 	
@@ -101,25 +102,35 @@ public class DBTools
 		
 	}
 	
-	public void addPerson(Person person) {
+	
+	
+	public Integer addPerson(Person person) {
 		/**
 		 * Prepares an SQL query with open variables, which are subsequently populated,
 		 * using the get-methods available in the Person class.
 		 */
+		Integer pId = null;
+		
 		connect();
-		String insertStr = "INSERT INTO Person (name, address, phone, note, favorite) VALUES (?, ?, ?, ?, ?)";
-		try (PreparedStatement preparedStatement = con.prepareStatement(insertStr)) {
+		String insertStr = "INSERT INTO Person (name, address, phone, note, favorite, haircolor_id) VALUES (?, ?, ?, ?, ?, ?)";
+		try (PreparedStatement preparedStatement = con.prepareStatement(insertStr, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, person.getName());
             preparedStatement.setString(2, person.getAddress());
             preparedStatement.setString(3, person.getPhone());
             preparedStatement.setString(4, person.getNote());
             preparedStatement.setBoolean(5, person.getFavorite());
+            preparedStatement.setInt(6, person.getHaircolor_id());
             preparedStatement.executeUpdate();
+            ResultSet genKey = preparedStatement.getGeneratedKeys();
+            if (genKey.next()) {
+            	pId = genKey.getInt(1);
+            }
             con.commit();
             con.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+		return pId;
 	}
 	
 	public void delPerson(int id) {
@@ -138,13 +149,14 @@ public class DBTools
 	public void updatePerson(Person person) {
 		connect();
 		int id = person.getId();
-		String updateStr = "UPDATE Person SET name = ?, address = ?, phone = ?, note = ?, favorite = ? where ID = " + id;
+		String updateStr = "UPDATE Person SET name = ?, address = ?, phone = ?, note = ?, favorite = ?, haircolor_id = ? where ID = " + id;
 		try (PreparedStatement statement = con.prepareStatement(updateStr)) {
 			statement.setString(1, person.getName());
 			statement.setString(2, person.getAddress());
 			statement.setString(3, person.getPhone());
 			statement.setString(4, person.getPhone());
 			statement.setBoolean(5, person.getFavorite());
+			statement.setInt(6, person.getHaircolor_id());
 			statement.executeUpdate();
 			con.commit();
 			con.close();
@@ -152,4 +164,51 @@ public class DBTools
 			e.printStackTrace();
 		}
 	}
+	
+	public List<Haircolor> getAllHaircolor() {
+		connect();
+		String selectStr = "SELECT * FROM Haircolor";
+		List<Haircolor> haircolors = new ArrayList<>();
+		try {
+			ResultSet result = stmt.executeQuery(selectStr);
+			while (result.next()) {
+				Haircolor hc = new Haircolor();
+				hc.setId(result.getInt("Id"));
+				hc.setName(result.getString("Name"));
+				haircolors.add(hc);
+			}
+			con.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return haircolors;
+	}
+	
+	public Haircolor getHaircolorById(int id) {
+		/**
+		 * Gets a specific recordset from the DB, based on the ID 
+		 * sent along in the request (path)
+		 */
+		connect();
+		System.out.println(id);
+		String selectStr = "Select * from Haircolor where id = " + id;
+		Haircolor haircolor = new Haircolor();
+		
+		try {
+			ResultSet result = stmt.executeQuery(selectStr);
+			if(result.next())
+			{
+				haircolor.setId(result.getInt("Id"));
+				haircolor.setName(result.getString("Name"));
+				con.close();
+			}
+			
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+		System.out.print(haircolor.toString());
+		return haircolor;
+	}	
+	
 }

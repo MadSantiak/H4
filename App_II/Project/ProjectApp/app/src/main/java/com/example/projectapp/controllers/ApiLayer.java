@@ -1,7 +1,11 @@
-package com.example.projectapp;
+package com.example.projectapp.controllers;
 
-import android.app.Service;
 import android.util.Log;
+
+import com.example.projectapp.haircolor.Haircolor;
+import com.example.projectapp.haircolor.IHaircolorService;
+import com.example.projectapp.person.IPersonService;
+import com.example.projectapp.person.Person;
 
 import java.io.IOException;
 import java.util.List;
@@ -69,30 +73,34 @@ public class ApiLayer {
         return people;
     }
 
-    public static void addPerson(Person person)
+    public static Integer addPerson(Person person)
     {
-        FutureTask<Void> futureTask = new FutureTask<>(new Callable<Void>() {
+        FutureTask<Integer> futureTask = new FutureTask<>(new Callable<Integer>() {
             @Override
-            public Void call() throws Exception {
+            public Integer call() throws Exception {
+                Log.d("TEST", "TEST");
+                Integer i = null;
                 IPersonService serv = ServiceBuilder.buildService(IPersonService.class);
 
-                Call<Void> req = serv.addPerson(person);
+                Call<Integer> req = serv.addPerson(person);
                 try {
-                    Response<Void> response = req.execute();
+                    i = req.execute().body();
+                    Log.d("BODY", i.toString());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            return null;
+                return i;
             }
         });
     Thread t = new Thread(futureTask);
     t.start();
-
+    Integer pId = null;
     try {
-        futureTask.get();
+        pId = futureTask.get();
     } catch (Exception e) {
         Log.e("Thread error:", e.getMessage());
         }
+    return pId;
     }
 
     public static void delPerson(int id)
@@ -147,5 +155,59 @@ public class ApiLayer {
         }
     }
 
+    public static List<Haircolor> getAllHaircolor() {
+        FutureTask<List<Haircolor>> futureTask = new FutureTask<>(new Callable<List<Haircolor>>() {
+            @Override
+            public List<Haircolor> call() throws Exception {
+                List<Haircolor> haircolors = null;
+                IHaircolorService serv = ServiceBuilder.buildService(IHaircolorService.class);
+                Call<List<Haircolor>> request = serv.getAllHaircolor();
+                try {
+                    haircolors = request.execute().body();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return haircolors;
+            }
+        });
+        Thread t = new Thread(futureTask);
+        t.start();
+        List<Haircolor> haircolors = null;
+        try {
+            haircolors = futureTask.get();
+        } catch (Exception e) {
+        }
+        return haircolors;
+    }
+
+    public static Haircolor getHaircolorById (int id)
+    {
+        FutureTask<Haircolor> futureTask = new FutureTask<>(new Callable<Haircolor>() {
+            @Override
+            public Haircolor call() {
+                Haircolor hc = null;
+                IHaircolorService serv =
+                        ServiceBuilder.buildService(IHaircolorService.class);
+
+                Call<Haircolor> req = serv.getHaircolorById(id);
+                try {
+                    hc = req.execute().body();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.d("ApiLayer", "Failed to fetch data.");
+                }
+                return hc;
+            }
+        });
+        Thread t = new Thread(futureTask);
+        t.start();
+        Haircolor haircolor = null;
+        try {
+            haircolor = futureTask.get();
+        } catch (Exception e) {
+            Log.d("Thread", e.getMessage());
+        }
+        return haircolor;
+    }
 
 }

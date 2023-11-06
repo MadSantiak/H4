@@ -8,7 +8,7 @@ public class Person {
     String address;
     String note;
     boolean favorite = false;
-//	Haircolor haircolor
+	int haircolor_id;
 //	ProgLang proglang
 
     public Person() {};
@@ -24,8 +24,22 @@ public class Person {
         this.note = note;
         this.favorite = favorite;
     }
+    public Person(String name, String phone, String address, String note, boolean favorite, int haircolor_id) {
+        this.name = name;
+        this.phone = phone;
+        this.address = address;
+        this.note = note;
+        this.favorite = favorite;
+        this.haircolor_id = haircolor_id;
+    }
 
-    public int getId() {
+    public int getHaircolor_id() {
+		return haircolor_id;
+	}
+	public void setHaircolor_id(int haircolor_id) {
+		this.haircolor_id = haircolor_id;
+	}
+	public int getId() {
         return id;
     }
     public void setId(int id) {

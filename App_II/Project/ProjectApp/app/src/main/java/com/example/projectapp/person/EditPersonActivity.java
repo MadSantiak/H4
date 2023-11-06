@@ -1,21 +1,32 @@
-package com.example.projectapp;
+package com.example.projectapp.person;
+
+import static com.example.projectapp.controllers.ApiLayer.getHaircolorById;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Spinner;
+
+import com.example.projectapp.controllers.ApiLayer;
+import com.example.projectapp.R;
+import com.example.projectapp.haircolor.Haircolor;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class EditPersonActivity extends AppCompatActivity {
 
     EditText txtName, txtPhone, txtAddress, txtNote;
     CheckBox isFavorite;
+    Spinner spnHaircolor;
     Button btnUpdate;
 
     Intent personIntent;
@@ -30,9 +41,17 @@ public class EditPersonActivity extends AppCompatActivity {
         txtAddress = findViewById(R.id.txtAddress);
         txtNote = findViewById(R.id.txtNote);
         isFavorite = findViewById(R.id.isFavorite);
+        spnHaircolor = findViewById(R.id.spnHaircolor);
+
+        List<Haircolor> haircolors = ApiLayer.getAllHaircolor();
+        ArrayAdapter<Haircolor> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, haircolors);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spnHaircolor.setAdapter(adapter);
+
         btnUpdate = findViewById(R.id.btnUpdate);
 
         personIntent = getIntent();
+
 
         Person person = (Person) personIntent.getSerializableExtra("person");
         if (person != null) {
@@ -41,6 +60,18 @@ public class EditPersonActivity extends AppCompatActivity {
             txtAddress.setText(person.getAddress());
             txtNote.setText(person.getNote());
             isFavorite.setChecked(person.getFavorite());
+
+            // Bit messier than overwriting equals() on the class, but simpler:
+            // Iterate through each option in Spinner, and compare the ID with the id of object sent
+            // along to the activity (person).
+            int hcId = person.getHaircolor_id();
+            for (int i = 0; i < haircolors.size(); i++){
+                if (haircolors.get(i).getId() == hcId)
+                {
+                    spnHaircolor.setSelection(i);
+                }
+            }
+
         }
 
         btnUpdate.setOnClickListener(new View.OnClickListener() {
@@ -51,6 +82,9 @@ public class EditPersonActivity extends AppCompatActivity {
                 person.setPhone(txtPhone.getText().toString());
                 person.setNote(txtNote.getText().toString());
                 person.setFavorite(isFavorite.isChecked());
+                Haircolor hc = (Haircolor) spnHaircolor.getSelectedItem();
+                person.setHaircolor_id(hc.getId());
+
                 ApiLayer.updatePerson(person);
 
                 Intent intent = new Intent();

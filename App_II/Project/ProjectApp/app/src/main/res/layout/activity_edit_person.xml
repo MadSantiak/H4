@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddPersonActivity"
+    tools:context=".person.AddPersonActivity"
     android:orientation="vertical"
     android:gravity="center_horizontal">
 
@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="25dp"
-        android:text="Add New Person"/>
+        android:text="Edit Person"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -85,6 +85,23 @@
             android:textSize="15dp"
             />
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Haircolor:"
+            android:ems="5"
+            android:textSize="15dp"/>
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/spnHaircolor"
+            android:ems="5"
+            android:textSize="15dp"
+            />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -104,6 +121,7 @@
             />
     </LinearLayout>
 
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
@@ -112,5 +130,6 @@
             android:layout_height="wrap_content"
             android:text="UPDATE"
             android:id="@+id/btnUpdate"/>
+
     </LinearLayout>
 </LinearLayout>

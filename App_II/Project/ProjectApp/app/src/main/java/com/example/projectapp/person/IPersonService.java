@@ -1,4 +1,4 @@
-package com.example.projectapp;
+package com.example.projectapp.person;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public interface IPersonService {
     Call<Person> getPersonById(@Path("id") int id);
 
     @POST("Person")
-    Call<Void> addPerson(@Body Person person);
+    Call<Integer> addPerson(@Body Person person);
 
     @DELETE("Person/{id}")
     Call<Void> delPerson(@Path("id") int id);

@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dk.tec.maso41.AnalyzeRequest;
+import dk.tec.maso41.Haircolor;
 import dk.tec.maso41.Person;
 import java.util.logging.Logger;
 
@@ -40,18 +41,28 @@ public class ProjectServlet extends HttpServlet {
 			case MatchPersonId:
 				Person p = db.getPersonById(analyze.getId());
 				String json = mapper.writeValueAsString(p);
-				System.out.println("BY ID: "+ json);
 				out.print(json);
 				break;
 			case MatchPerson:
 				List<Person> people = db.getAllPerson();
 				String jsonAll = mapper.writeValueAsString(people);
-				System.out.println(jsonAll);
 				out.print(jsonAll);
+				break;
+			case MatchHaircolor:
+				List<Haircolor> haircolors = db.getAllHaircolor();
+				String jsonAllHair = mapper.writeValueAsString(haircolors);
+				out.print(jsonAllHair);;
+				break;
+			case MatchHaircolorId:
+				Haircolor hc = db.getHaircolorById(analyze.getId());
+				String jsonHC = mapper.writeValueAsString(hc);
+				out.print(jsonHC);
 				break;
 			case MatchNo:
 				out.write("\nNo such person..");
 				break;
+		default:
+			break;
 			}
 		}
 	
@@ -61,13 +72,17 @@ public class ProjectServlet extends HttpServlet {
 		 * Allows the App to call the API and essentially create a Person object
 		 * via the DBTools addPerson() function.
 		 */
+		PrintWriter out = resp.getWriter();
 		DBTools db = new DBTools();
 		BufferedReader reader = req.getReader();
 		String recJSON = reader.readLine();
 		System.out.println(recJSON);
 		ObjectMapper mapper = new ObjectMapper();
 		Person p = mapper.readValue(recJSON, Person.class);
-		db.addPerson(p);
+		String resInt = mapper.writeValueAsString(db.addPerson(p));
+		System.out.println(resInt);
+		out.print(resInt);
+		
 	}
 
 	@Override

@@ -16,10 +16,10 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".EditPersonActivity"
+            android:name=".person.EditPersonActivity"
             android:exported="false" />
         <activity
-            android:name=".AddPersonActivity"
+            android:name=".person.AddPersonActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

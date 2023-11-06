@@ -1,19 +1,22 @@
-package com.example.projectapp;
+package com.example.projectapp.person;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
+
+import com.example.projectapp.controllers.ApiLayer;
+import com.example.projectapp.MainActivity;
+import com.example.projectapp.R;
 
 import java.util.List;
 
@@ -23,7 +26,7 @@ public class PersonAdapter extends BaseAdapter {
     private final List<Person> listPpl;
     private MainActivity main;
 
-    TextView txtName,txtPhone,txtAddress,txtNote;
+    TextView txtName,txtPhone,txtAddress,txtNote,txtHaircolor;
     CheckBox isFavorite;
 
     Button btnDel, btnEdit;
@@ -86,6 +89,9 @@ public class PersonAdapter extends BaseAdapter {
         txtNote.setText(person.getNote());
         txtPhone = v.findViewById(R.id.txtPhone);
         txtPhone.setText(person.getPhone());
+        txtHaircolor = v.findViewById(R.id.txtHaircolor);
+        int hcId = person.getHaircolor_id();
+        txtHaircolor.setText(ApiLayer.getHaircolorById(hcId).toString());
         isFavorite = v.findViewById(R.id.isFavorite);
         isFavorite.setChecked(person.getFavorite());
 
