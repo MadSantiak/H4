@@ -17,6 +17,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import com.example.projectapp.controllers.ApiLayer;
 import com.example.projectapp.MainActivity;
 import com.example.projectapp.R;
+import com.example.projectapp.haircolor.Haircolor;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class PersonAdapter extends BaseAdapter {
     private final List<Person> listPpl;
     private MainActivity main;
 
-    TextView txtName,txtPhone,txtAddress,txtNote,txtHaircolor;
+    TextView txtName,txtPhone,txtAddress,txtNote,txtHaircolor,txtProgLang;
     CheckBox isFavorite;
 
     Button btnDel, btnEdit;
@@ -89,9 +90,14 @@ public class PersonAdapter extends BaseAdapter {
         txtNote.setText(person.getNote());
         txtPhone = v.findViewById(R.id.txtPhone);
         txtPhone.setText(person.getPhone());
+
         txtHaircolor = v.findViewById(R.id.txtHaircolor);
-        int hcId = person.getHaircolor_id();
-        txtHaircolor.setText(ApiLayer.getHaircolorById(hcId).toString());
+        Haircolor hc = person.getHaircolor();
+        txtHaircolor.setText(hc.toString());
+
+        txtProgLang = v.findViewById(R.id.txtProgLang);
+
+
         isFavorite = v.findViewById(R.id.isFavorite);
         isFavorite.setChecked(person.getFavorite());
 

@@ -1,5 +1,7 @@
 package com.example.projectapp.person;
 
+import com.example.projectapp.haircolor.Haircolor;
+
 import java.io.Serializable;
 
 public class Person implements Serializable {
@@ -9,9 +11,8 @@ public class Person implements Serializable {
     String address;
     String note;
     boolean favorite = false;
-    int haircolor_id;
-
-//	ProgLang proglang
+    Haircolor haircolor;
+    int programminglanguage_id;
 
     public Person() {};
     public Person(String name, String phone, String address) {
@@ -26,21 +27,37 @@ public class Person implements Serializable {
         this.note = note;
         this.favorite = favorite;
     }
-    public Person(String name, String phone, String address, String note, boolean favorite, int haircolor_id) {
+    public Person(String name, String phone, String address, String note, boolean favorite, Haircolor haircolor) {
         this.name = name;
         this.phone = phone;
         this.address = address;
         this.note = note;
         this.favorite = favorite;
-        this.haircolor_id = haircolor_id;
+        this.haircolor = haircolor;
+    }
+    public Person(String name, String phone, String address, String note, boolean favorite, Haircolor haircolor, int programminglanguage_id) {
+        this.name = name;
+        this.phone = phone;
+        this.address = address;
+        this.note = note;
+        this.favorite = favorite;
+        this.haircolor = haircolor;
+        this.programminglanguage_id = programminglanguage_id;
     }
 
-    public int getHaircolor_id() {
-        return haircolor_id;
+    public int getProgramminglanguage_id() {
+        return programminglanguage_id;
+    }
+    public void setProgramminglanguage_id(int programminglanguage_id) {
+        this.programminglanguage_id = programminglanguage_id;
     }
 
-    public void setHaircolor_id(int haircolor_id) {
-        this.haircolor_id = haircolor_id;
+    public Haircolor getHaircolor() {
+        return haircolor;
+    }
+
+    public void setHaircolor(Haircolor haircolor) {
+        this.haircolor = haircolor;
     }
 
     public int getId() {

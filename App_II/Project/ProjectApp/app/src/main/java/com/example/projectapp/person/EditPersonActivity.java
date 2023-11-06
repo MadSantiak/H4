@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import com.example.projectapp.controllers.ApiLayer;
@@ -27,6 +28,7 @@ public class EditPersonActivity extends AppCompatActivity {
     EditText txtName, txtPhone, txtAddress, txtNote;
     CheckBox isFavorite;
     Spinner spnHaircolor;
+    RadioGroup radProg;
     Button btnUpdate;
 
     Intent personIntent;
@@ -61,12 +63,9 @@ public class EditPersonActivity extends AppCompatActivity {
             txtNote.setText(person.getNote());
             isFavorite.setChecked(person.getFavorite());
 
-            // Bit messier than overwriting equals() on the class, but simpler:
-            // Iterate through each option in Spinner, and compare the ID with the id of object sent
-            // along to the activity (person).
-            int hcId = person.getHaircolor_id();
-            for (int i = 0; i < haircolors.size(); i++){
-                if (haircolors.get(i).getId() == hcId)
+            Haircolor hc = person.getHaircolor();
+            for (int i = 0; i < haircolors.size(); i++) {
+                if (haircolors.get(i).getId() == hc.getId())
                 {
                     spnHaircolor.setSelection(i);
                 }
@@ -83,7 +82,7 @@ public class EditPersonActivity extends AppCompatActivity {
                 person.setNote(txtNote.getText().toString());
                 person.setFavorite(isFavorite.isChecked());
                 Haircolor hc = (Haircolor) spnHaircolor.getSelectedItem();
-                person.setHaircolor_id(hc.getId());
+                person.setHaircolor(hc);
 
                 ApiLayer.updatePerson(person);
 

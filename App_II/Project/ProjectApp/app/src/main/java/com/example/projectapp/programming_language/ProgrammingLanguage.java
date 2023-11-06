@@ -1,15 +1,16 @@
-package com.example.projectapp.haircolor;
+package com.example.projectapp.programming_language;
 
 import androidx.annotation.NonNull;
 
-import java.io.Serializable;
+import com.example.projectapp.haircolor.Haircolor;
+
 import java.util.Objects;
 
-public class Haircolor implements Serializable {
+public class ProgrammingLanguage {
     int id;
     String name;
 
-    public Haircolor(String name) {
+    public ProgrammingLanguage(String name) {
         this.name = name;
     }
 
@@ -30,6 +31,7 @@ public class Haircolor implements Serializable {
     public String toString() {
         return name;
     }
+
 }
 
 

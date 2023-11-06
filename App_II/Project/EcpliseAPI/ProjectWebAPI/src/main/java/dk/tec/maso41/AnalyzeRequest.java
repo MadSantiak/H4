@@ -19,6 +19,7 @@ public class AnalyzeRequest {
 	public AnalyzeRequest(String pathInfo) {
 		Matcher personMatcher = Pattern.compile("/Person/([0-9]+)").matcher(pathInfo);
 		Matcher colorMatcher = Pattern.compile("/Haircolor/([0-9]+)").matcher(pathInfo);
+		Matcher progMatcher = Pattern.compile("/ProgrammingLanguage/([0-9]+)").matcher(pathInfo);
 		
 		if (personMatcher.find()) {
 			match = MatchEnum.MatchPersonId;
@@ -26,20 +27,24 @@ public class AnalyzeRequest {
 		} else if (colorMatcher.find()) {
 			match = MatchEnum.MatchHaircolorId;
 			id = Integer.parseInt(colorMatcher.group(1));
-		} else	{
+		} else if (progMatcher.find()) {
+			match = MatchEnum.MatchProgrammingLanguageId;
+			id = Integer.parseInt(progMatcher.group(1));
+		}
+		else	{
 			personMatcher = Pattern.compile("/Person").matcher(pathInfo);
 			colorMatcher = Pattern.compile("/Haircolor").matcher(pathInfo);
+			progMatcher = Pattern.compile("/ProgrammingLanguage").matcher(pathInfo);
+			
 			if (personMatcher.find()) {
 				match = MatchEnum.MatchPerson;
 			} else if (colorMatcher.find()) {
 				match = MatchEnum.MatchHaircolor;
+			} else if (progMatcher.find()) {
+				match = MatchEnum.MatchProgrammingLanguage;
 			} else {
 				match = MatchEnum.MatchNo;
 			}
-		} 
-		
-		
-		
+		}
 	}
-
 }

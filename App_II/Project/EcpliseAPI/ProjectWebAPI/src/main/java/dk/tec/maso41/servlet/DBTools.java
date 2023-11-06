@@ -11,6 +11,7 @@ import java.util.List;
 
 import dk.tec.maso41.Haircolor;
 import dk.tec.maso41.Person;
+import dk.tec.maso41.ProgrammingLanguage;
 
 public class DBTools 
 {
@@ -38,7 +39,6 @@ public class DBTools
 			e.printStackTrace();
 		}	
 	}
-	
 	
 	public Person getPersonById(int id) {
 		/**
@@ -77,7 +77,11 @@ public class DBTools
 		 * Returns them as a List
 		 */
 		connect();
-		String selectStr = "SELECT * FROM Person";
+		// String selectStr = "SELECT * FROM Person";
+		String selectStr = 
+				"SELECT p.*, h.id AS haircolor_id, h.name AS haircolor_name " +
+				"FROM Person p " +
+				"INNER JOIN Haircolor h on p.haircolor_id = h.id";
 		List<Person> people = new ArrayList<>();
 		try {
 	        ResultSet result = stmt.executeQuery(selectStr);
@@ -89,7 +93,12 @@ public class DBTools
 	            person.setPhone(result.getString("Phone"));
 				person.setNote(result.getString("Note"));
 				person.setFavorite(result.getBoolean("Favorite"));
-				person.setHaircolor_id(result.getInt("Haircolor_id"));
+				
+				Haircolor hc = new Haircolor();
+				hc.setId(result.getInt("haircolor_id"));
+				hc.setName(result.getString("haircolor_name"));
+				
+				person.setHaircolor(hc);
 	            people.add(person);
 	        	}
 	
@@ -101,8 +110,6 @@ public class DBTools
 		    return people;
 		
 	}
-	
-	
 	
 	public Integer addPerson(Person person) {
 		/**
@@ -119,7 +126,10 @@ public class DBTools
             preparedStatement.setString(3, person.getPhone());
             preparedStatement.setString(4, person.getNote());
             preparedStatement.setBoolean(5, person.getFavorite());
-            preparedStatement.setInt(6, person.getHaircolor_id());
+            
+            Haircolor hc = person.getHaircolor();
+            preparedStatement.setInt(6, hc.getId());
+            
             preparedStatement.executeUpdate();
             ResultSet genKey = preparedStatement.getGeneratedKeys();
             if (genKey.next()) {
@@ -156,7 +166,9 @@ public class DBTools
 			statement.setString(3, person.getPhone());
 			statement.setString(4, person.getPhone());
 			statement.setBoolean(5, person.getFavorite());
-			statement.setInt(6, person.getHaircolor_id());
+			
+			Haircolor hc = person.getHaircolor();
+			statement.setInt(6, hc.getId());
 			statement.executeUpdate();
 			con.commit();
 			con.close();
@@ -207,8 +219,50 @@ public class DBTools
 			
 			e.printStackTrace();
 		}
-		System.out.print(haircolor.toString());
 		return haircolor;
+	}	
+	public List<ProgrammingLanguage> getAllProgrammingLanguage() {
+		connect();
+		String selectStr = "SELECT * FROM ProgrammingLanguage";
+		List<ProgrammingLanguage> prgLng = new ArrayList<>();
+		try {
+			ResultSet result = stmt.executeQuery(selectStr);
+			while (result.next()) {
+				ProgrammingLanguage lang = new ProgrammingLanguage();
+				lang.setId(result.getInt("Id"));
+				lang.setName(result.getString("Name"));
+				prgLng.add(lang);
+			}
+			con.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return prgLng;
+	}
+	
+	public ProgrammingLanguage getProgrammingLanguageById(int id) {
+		/**
+		 * Gets a specific recordset from the DB, based on the ID 
+		 * sent along in the request (path)
+		 */
+		connect();
+		String selectStr = "Select * from ProgrammingLanguage where id = " + id;
+		ProgrammingLanguage lang = new ProgrammingLanguage();
+		
+		try {
+			ResultSet result = stmt.executeQuery(selectStr);
+			if(result.next())
+			{
+				lang.setId(result.getInt("Id"));
+				lang.setName(result.getString("Name"));
+				con.close();
+			}
+			
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+		return lang;
 	}	
 	
 }

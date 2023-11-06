@@ -18,6 +18,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.tec.maso41.AnalyzeRequest;
 import dk.tec.maso41.Haircolor;
 import dk.tec.maso41.Person;
+import dk.tec.maso41.ProgrammingLanguage;
+
 import java.util.logging.Logger;
 
 public class ProjectServlet extends HttpServlet {
@@ -48,18 +50,28 @@ public class ProjectServlet extends HttpServlet {
 				String jsonAll = mapper.writeValueAsString(people);
 				out.print(jsonAll);
 				break;
-			case MatchHaircolor:
-				List<Haircolor> haircolors = db.getAllHaircolor();
-				String jsonAllHair = mapper.writeValueAsString(haircolors);
-				out.print(jsonAllHair);;
-				break;
 			case MatchHaircolorId:
 				Haircolor hc = db.getHaircolorById(analyze.getId());
 				String jsonHC = mapper.writeValueAsString(hc);
 				out.print(jsonHC);
 				break;
+			case MatchHaircolor:
+				List<Haircolor> haircolors = db.getAllHaircolor();
+				String jsonAllHair = mapper.writeValueAsString(haircolors);
+				out.print(jsonAllHair);;
+				break;
+			case MatchProgrammingLanguageId:
+				ProgrammingLanguage lang = db.getProgrammingLanguageById(analyze.getId());
+				String jsonProg = mapper.writeValueAsString(lang);
+				out.print(jsonProg);
+				break;
+			case MatchProgrammingLanguage:
+				List<ProgrammingLanguage> prgLangs = db.getAllProgrammingLanguage();
+				String jsonAllProg = mapper.writeValueAsString(prgLangs);
+				out.print(jsonAllProg);
+				break;
 			case MatchNo:
-				out.write("\nNo such person..");
+				out.write("\nNot a valid request..");
 				break;
 		default:
 			break;

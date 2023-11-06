@@ -6,6 +6,8 @@ import com.example.projectapp.haircolor.Haircolor;
 import com.example.projectapp.haircolor.IHaircolorService;
 import com.example.projectapp.person.IPersonService;
 import com.example.projectapp.person.Person;
+import com.example.projectapp.programming_language.IProgrammingLanguageService;
+import com.example.projectapp.programming_language.ProgrammingLanguage;
 
 import java.io.IOException;
 import java.util.List;
@@ -78,14 +80,12 @@ public class ApiLayer {
         FutureTask<Integer> futureTask = new FutureTask<>(new Callable<Integer>() {
             @Override
             public Integer call() throws Exception {
-                Log.d("TEST", "TEST");
                 Integer i = null;
                 IPersonService serv = ServiceBuilder.buildService(IPersonService.class);
 
                 Call<Integer> req = serv.addPerson(person);
                 try {
                     i = req.execute().body();
-                    Log.d("BODY", i.toString());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -208,6 +208,60 @@ public class ApiLayer {
             Log.d("Thread", e.getMessage());
         }
         return haircolor;
+    }
+    public static List<ProgrammingLanguage> getAllProgrammingLanguage() {
+        FutureTask<List<ProgrammingLanguage>> futureTask = new FutureTask<>(new Callable<List<ProgrammingLanguage>>() {
+            @Override
+            public List<ProgrammingLanguage> call() throws Exception {
+                List<ProgrammingLanguage> programmingLanguages = null;
+                IProgrammingLanguageService serv = ServiceBuilder.buildService(IProgrammingLanguageService.class);
+                Call<List<ProgrammingLanguage>> request = serv.getAllProgrammingLanguage();
+                try {
+                    programmingLanguages = request.execute().body();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return programmingLanguages;
+            }
+        });
+        Thread t = new Thread(futureTask);
+        t.start();
+        List<ProgrammingLanguage> programmingLanguages = null;
+        try {
+            programmingLanguages = futureTask.get();
+        } catch (Exception e) {
+        }
+        return programmingLanguages;
+    }
+
+    public static ProgrammingLanguage getProgrammingLanguageById (int id)
+    {
+        FutureTask<ProgrammingLanguage> futureTask = new FutureTask<>(new Callable<ProgrammingLanguage>() {
+            @Override
+            public ProgrammingLanguage call() {
+                ProgrammingLanguage programmingLanguage = null;
+                IProgrammingLanguageService serv =
+                        ServiceBuilder.buildService(IProgrammingLanguageService.class);
+
+                Call<ProgrammingLanguage> req = serv.getProgrammingLanguageById(id);
+                try {
+                    programmingLanguage = req.execute().body();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.d("ApiLayer", "Failed to fetch data.");
+                }
+                return programmingLanguage;
+            }
+        });
+        Thread t = new Thread(futureTask);
+        t.start();
+        ProgrammingLanguage prglng = null;
+        try {
+            prglng = futureTask.get();
+        } catch (Exception e) {
+            Log.d("Thread", e.getMessage());
+        }
+        return prglng;
     }
 
 }
