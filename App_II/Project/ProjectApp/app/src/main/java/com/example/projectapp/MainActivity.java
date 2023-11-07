@@ -71,11 +71,9 @@ public class MainActivity extends AppCompatActivity {
                         if (o.getResultCode() == Activity.RESULT_OK)
                         {
                             Intent upd = o.getData();
-                            //Person p = (Person) upd.getSerializableExtra("updPerson");
                             persons.clear();
                             persons.addAll(ApiLayer.getAllPerson());
                             personAdapter.notifyDataSetChanged();
-                            Log.d("MEEEH", "meh");
                         }
                     }
                 }

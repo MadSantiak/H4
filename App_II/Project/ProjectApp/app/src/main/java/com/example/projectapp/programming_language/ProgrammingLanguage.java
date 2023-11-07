@@ -4,9 +4,10 @@ import androidx.annotation.NonNull;
 
 import com.example.projectapp.haircolor.Haircolor;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class ProgrammingLanguage {
+public class ProgrammingLanguage implements Serializable {
     int id;
     String name;
 

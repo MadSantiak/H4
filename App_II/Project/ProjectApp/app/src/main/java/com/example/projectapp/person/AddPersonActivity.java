@@ -85,8 +85,8 @@ public class AddPersonActivity extends AppCompatActivity implements View.OnClick
             Haircolor hc = (Haircolor) spnHaircolor.getSelectedItem();
 
             int programminglanguage_id = radPrg.getCheckedRadioButtonId();
-            Log.d("ProgLang:", String.valueOf(programminglanguage_id));
-            p = new Person(name, phone, address, note, favorite, hc, programminglanguage_id);
+            ProgrammingLanguage progLang = ApiLayer.getProgrammingLanguageById(programminglanguage_id);
+            p = new Person(name, phone, address, note, favorite, hc, progLang);
             Integer i = ApiLayer.addPerson(p);
 
             txtId.setText(i.toString());

@@ -1,6 +1,9 @@
 package com.example.projectapp.person;
 
+import android.util.Log;
+
 import com.example.projectapp.haircolor.Haircolor;
+import com.example.projectapp.programming_language.ProgrammingLanguage;
 
 import java.io.Serializable;
 
@@ -12,7 +15,7 @@ public class Person implements Serializable {
     String note;
     boolean favorite = false;
     Haircolor haircolor;
-    int programminglanguage_id;
+    ProgrammingLanguage programminglanguage;
 
     public Person() {};
     public Person(String name, String phone, String address) {
@@ -35,23 +38,24 @@ public class Person implements Serializable {
         this.favorite = favorite;
         this.haircolor = haircolor;
     }
-    public Person(String name, String phone, String address, String note, boolean favorite, Haircolor haircolor, int programminglanguage_id) {
+    public Person(String name, String phone, String address, String note, boolean favorite, Haircolor haircolor, ProgrammingLanguage programminglanguage) {
         this.name = name;
         this.phone = phone;
         this.address = address;
         this.note = note;
         this.favorite = favorite;
         this.haircolor = haircolor;
-        this.programminglanguage_id = programminglanguage_id;
+        this.programminglanguage = programminglanguage;
     }
 
-    public int getProgramminglanguage_id() {
-        return programminglanguage_id;
-    }
-    public void setProgramminglanguage_id(int programminglanguage_id) {
-        this.programminglanguage_id = programminglanguage_id;
-    }
+    public ProgrammingLanguage getProgramminglanguage() {
 
+        Log.d("ProgLang", programminglanguage.getName());
+        return programminglanguage;
+    }
+    public void setProgramminglanguage(ProgrammingLanguage programminglanguage) {
+        this.programminglanguage = programminglanguage;
+    }
     public Haircolor getHaircolor() {
         return haircolor;
     }

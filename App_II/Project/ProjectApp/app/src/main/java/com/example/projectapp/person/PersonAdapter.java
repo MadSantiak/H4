@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -18,6 +19,7 @@ import com.example.projectapp.controllers.ApiLayer;
 import com.example.projectapp.MainActivity;
 import com.example.projectapp.R;
 import com.example.projectapp.haircolor.Haircolor;
+import com.example.projectapp.programming_language.ProgrammingLanguage;
 
 import java.util.List;
 
@@ -28,7 +30,9 @@ public class PersonAdapter extends BaseAdapter {
     private MainActivity main;
 
     TextView txtName,txtPhone,txtAddress,txtNote,txtHaircolor,txtProgLang;
-    CheckBox isFavorite;
+    CheckBox isFavorite; // Deprecated!
+
+    ImageView imgFav;
 
     Button btnDel, btnEdit;
 
@@ -93,13 +97,30 @@ public class PersonAdapter extends BaseAdapter {
 
         txtHaircolor = v.findViewById(R.id.txtHaircolor);
         Haircolor hc = person.getHaircolor();
-        txtHaircolor.setText(hc.toString());
+        if (hc != null) txtHaircolor.setText(hc.toString());
 
         txtProgLang = v.findViewById(R.id.txtProgLang);
+        ProgrammingLanguage pl = person.getProgramminglanguage();
+        if (pl != null) Log.d("PL ADAPTER", pl.toString());
+        if (pl != null) txtProgLang.setText(pl.toString());
 
+        // isFavorite = v.findViewById(R.id.isFavorite);
+        // isFavorite.setChecked(person.getFavorite());
 
-        isFavorite = v.findViewById(R.id.isFavorite);
-        isFavorite.setChecked(person.getFavorite());
+        imgFav = v.findViewById(R.id.imgFav);
+
+        setInternalFav(person);
+
+        imgFav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("Testing", "testTest");
+                person.setFavorite(!person.getFavorite());
+                setInternalFav(person);
+
+            }
+        });
+
 
         btnDel = v.findViewById(R.id.btnDel);
         btnEdit = v.findViewById(R.id.btnEdit);
@@ -142,5 +163,16 @@ public class PersonAdapter extends BaseAdapter {
 
 
         return v;
+    }
+
+    private void setInternalFav(Person person) {
+        Log.d("Fav", String.valueOf(person.getFavorite()));
+        if (person.getFavorite()) {
+            imgFav.setImageResource(R.drawable.star_fav);
+        } else {
+            imgFav.setImageResource(R.drawable.star_unfav);
+        }
+        ApiLayer.updatePerson(person);
+        notifyDataSetChanged();
     }
 }

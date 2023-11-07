@@ -46,7 +46,15 @@ public class DBTools
 		 * sent along in the request (path)
 		 */
 		connect();
-		String selectStr = "Select * from Person where id = " + id;
+		String selectStr = "SELECT p.*, "
+				+ "h.id AS haircolor_id, "
+				+ "h.name AS haircolor_name, "
+				+ "pl.id AS programminglanguage_id, "
+				+ "pl.name AS programminglanguage_name " +
+				"FROM Person p " +
+				"LEFT JOIN Haircolor h on p.haircolor_id = h.id " +
+				"LEFT JOIN ProgrammingLanguage pl on p.programminglanguage_id = pl.id " +
+				"WHERE p.id = " + id;
 		Person person = new Person();
 		
 		try {
@@ -59,7 +67,11 @@ public class DBTools
 				person.setPhone(result.getString("Phone"));
 				person.setNote(result.getString("Note"));
 				person.setFavorite(result.getBoolean("Favorite"));
-				person.setHaircolor_id(result.getInt("Haircolor_id"));
+				Haircolor hc = new Haircolor();
+				hc.setId(result.getInt("haircolor_id"));
+				hc.setName(result.getString("haircolor_name"));
+				
+				person.setHaircolor(hc);
 				con.close();
 			}
 			
@@ -79,9 +91,14 @@ public class DBTools
 		connect();
 		// String selectStr = "SELECT * FROM Person";
 		String selectStr = 
-				"SELECT p.*, h.id AS haircolor_id, h.name AS haircolor_name " +
+				"SELECT p.*, "
+				+ "h.id AS haircolor_id, "
+				+ "h.name AS haircolor_name, "
+				+ "pl.id AS programminglanguage_id, "
+				+ "pl.name AS programminglanguage_name " +
 				"FROM Person p " +
-				"INNER JOIN Haircolor h on p.haircolor_id = h.id";
+				"LEFT JOIN Haircolor h on p.haircolor_id = h.id " +
+				"LEFT JOIN ProgrammingLanguage pl on p.programminglanguage_id = pl.id";
 		List<Person> people = new ArrayList<>();
 		try {
 	        ResultSet result = stmt.executeQuery(selectStr);
@@ -97,9 +114,14 @@ public class DBTools
 				Haircolor hc = new Haircolor();
 				hc.setId(result.getInt("haircolor_id"));
 				hc.setName(result.getString("haircolor_name"));
-				
 				person.setHaircolor(hc);
-	            people.add(person);
+				
+				ProgrammingLanguage pl = new ProgrammingLanguage();
+				pl.setId(result.getInt("programminglanguage_id"));
+				pl.setName(result.getString("programminglanguage_name"));
+	            person.setProgramminglanguage(pl);
+				
+				people.add(person);
 	        	}
 	
 	        con.close();
@@ -119,7 +141,7 @@ public class DBTools
 		Integer pId = null;
 		
 		connect();
-		String insertStr = "INSERT INTO Person (name, address, phone, note, favorite, haircolor_id) VALUES (?, ?, ?, ?, ?, ?)";
+		String insertStr = "INSERT INTO Person (name, address, phone, note, favorite, haircolor_id, programminglanguage_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
 		try (PreparedStatement preparedStatement = con.prepareStatement(insertStr, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, person.getName());
             preparedStatement.setString(2, person.getAddress());
@@ -129,6 +151,9 @@ public class DBTools
             
             Haircolor hc = person.getHaircolor();
             preparedStatement.setInt(6, hc.getId());
+            
+            ProgrammingLanguage pl = person.getProgramminglanguage();
+            preparedStatement.setInt(7, pl.getId());
             
             preparedStatement.executeUpdate();
             ResultSet genKey = preparedStatement.getGeneratedKeys();
@@ -159,7 +184,7 @@ public class DBTools
 	public void updatePerson(Person person) {
 		connect();
 		int id = person.getId();
-		String updateStr = "UPDATE Person SET name = ?, address = ?, phone = ?, note = ?, favorite = ?, haircolor_id = ? where ID = " + id;
+		String updateStr = "UPDATE Person SET name = ?, address = ?, phone = ?, note = ?, favorite = ?, haircolor_id = ?, programminglanguage_id = ? where ID = " + id;
 		try (PreparedStatement statement = con.prepareStatement(updateStr)) {
 			statement.setString(1, person.getName());
 			statement.setString(2, person.getAddress());
@@ -169,6 +194,12 @@ public class DBTools
 			
 			Haircolor hc = person.getHaircolor();
 			statement.setInt(6, hc.getId());
+			
+			ProgrammingLanguage pl = person.getProgramminglanguage();
+			System.out.println(pl.toString());
+			System.out.println(String.valueOf(pl.getId()));
+			statement.setInt(7, pl.getId());
+			
 			statement.executeUpdate();
 			con.commit();
 			con.close();
@@ -202,7 +233,6 @@ public class DBTools
 		 * sent along in the request (path)
 		 */
 		connect();
-		System.out.println(id);
 		String selectStr = "Select * from Haircolor where id = " + id;
 		Haircolor haircolor = new Haircolor();
 		
@@ -248,13 +278,16 @@ public class DBTools
 		connect();
 		String selectStr = "Select * from ProgrammingLanguage where id = " + id;
 		ProgrammingLanguage lang = new ProgrammingLanguage();
+		System.out.println("PROGRAMMING LANGUAGE");
 		
 		try {
 			ResultSet result = stmt.executeQuery(selectStr);
 			if(result.next())
 			{
 				lang.setId(result.getInt("Id"));
+				System.out.println(result.getInt("Id"));
 				lang.setName(result.getString("Name"));
+				System.out.println(result.getInt("Name"));
 				con.close();
 			}
 			
@@ -262,6 +295,7 @@ public class DBTools
 			
 			e.printStackTrace();
 		}
+		
 		return lang;
 	}	
 	

@@ -13,12 +13,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import com.example.projectapp.controllers.ApiLayer;
 import com.example.projectapp.R;
 import com.example.projectapp.haircolor.Haircolor;
+import com.example.projectapp.programming_language.ProgrammingLanguage;
 
 import java.io.Serializable;
 import java.util.List;
@@ -28,7 +30,7 @@ public class EditPersonActivity extends AppCompatActivity {
     EditText txtName, txtPhone, txtAddress, txtNote;
     CheckBox isFavorite;
     Spinner spnHaircolor;
-    RadioGroup radProg;
+    RadioGroup radPrg;
     Button btnUpdate;
 
     Intent personIntent;
@@ -43,12 +45,23 @@ public class EditPersonActivity extends AppCompatActivity {
         txtAddress = findViewById(R.id.txtAddress);
         txtNote = findViewById(R.id.txtNote);
         isFavorite = findViewById(R.id.isFavorite);
-        spnHaircolor = findViewById(R.id.spnHaircolor);
 
+        // Spinner setup
+        spnHaircolor = findViewById(R.id.spnHaircolor);
         List<Haircolor> haircolors = ApiLayer.getAllHaircolor();
         ArrayAdapter<Haircolor> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, haircolors);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spnHaircolor.setAdapter(adapter);
+
+        // RadioButton setup
+        List<ProgrammingLanguage> prgLangs = ApiLayer.getAllProgrammingLanguage();
+        radPrg = findViewById(R.id.radPrg);
+        for (int i = 0; i < prgLangs.size(); i++) {
+            RadioButton option = new RadioButton(this);
+            option.setId(i+1);
+            option.setText(prgLangs.get(i).getName());
+            radPrg.addView(option);
+        }
 
         btnUpdate = findViewById(R.id.btnUpdate);
 
@@ -64,12 +77,22 @@ public class EditPersonActivity extends AppCompatActivity {
             isFavorite.setChecked(person.getFavorite());
 
             Haircolor hc = person.getHaircolor();
-            for (int i = 0; i < haircolors.size(); i++) {
-                if (haircolors.get(i).getId() == hc.getId())
-                {
-                    spnHaircolor.setSelection(i);
+            if (hc != null) {
+                for (int i = 0; i < haircolors.size(); i++) {
+                    if (haircolors.get(i).getId() == hc.getId()) {
+                        spnHaircolor.setSelection(i);
+                    }
                 }
             }
+            ProgrammingLanguage pl = person.getProgramminglanguage();
+            if (pl != null) {
+                for (int i = 0; i < prgLangs.size(); i++) {
+                    if (prgLangs.get(i).getId() == pl.getId()) {
+                        radPrg.check(radPrg.getChildAt(i).getId());
+                    }
+                }
+            }
+
 
         }
 
@@ -83,6 +106,11 @@ public class EditPersonActivity extends AppCompatActivity {
                 person.setFavorite(isFavorite.isChecked());
                 Haircolor hc = (Haircolor) spnHaircolor.getSelectedItem();
                 person.setHaircolor(hc);
+
+                Log.d("Checked button", String.valueOf(radPrg.getCheckedRadioButtonId()));
+                ProgrammingLanguage pl = (ProgrammingLanguage) ApiLayer.getProgrammingLanguageById(radPrg.getCheckedRadioButtonId());
+                Log.d("PL", pl.toString());
+                person.setProgramminglanguage(pl);
 
                 ApiLayer.updatePerson(person);
 
