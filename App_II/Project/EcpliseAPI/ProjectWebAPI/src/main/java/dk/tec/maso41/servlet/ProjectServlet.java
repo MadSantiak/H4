@@ -108,14 +108,6 @@ public class ProjectServlet extends HttpServlet {
 				String resProgLang = mapper.writeValueAsString(db.addProgrammingLanguage(pl));
 				out.print(resProgLang);
 				break;
-			case MatchHaircolorId:
-				break;
-			case MatchNo:
-				break;
-			case MatchPersonId:
-				break;
-			case MatchProgrammingLanguageId:
-				break;
 			default:
 				break;
 		}
@@ -133,9 +125,27 @@ public class ProjectServlet extends HttpServlet {
 		 * which is finally extracted using the AnalyseRequest class.
 		 */
 		AnalyzeRequest analyze = new AnalyzeRequest(req.getPathInfo());
-		ObjectMapper mapper = new ObjectMapper();
 		DBTools db = new DBTools();
-		db.delPerson(analyze.getId());
+		int delId = analyze.getId();
+		System.out.println(req.getPathInfo());
+		System.out.println("DELETING RECORD " + delId);
+		switch(analyze.getMatch())
+		{
+			case MatchHaircolorId:
+				System.out.print("HC");
+				db.delHaircolor(delId);
+				break;
+			case MatchPersonId:
+				System.out.print("Person");
+				db.delPerson(delId);
+				break;
+			case MatchProgrammingLanguageId:
+				System.out.print("PL");
+				db.delProgrammingLanguage(delId);
+				break;
+			default:
+				break;
+		}
 	}
 
 	@Override

@@ -51,10 +51,6 @@ public class PersonAdapter extends BaseAdapter {
         this.editPersonActivityLauncher = editPersonActivityLauncher;
     }
 
-    public void updateListPpl(List<Person> listPpl) {
-        listPpl.clear();
-        listPpl.addAll(listPpl);
-    }
 
     @Override
     public int getCount() {
@@ -95,26 +91,28 @@ public class PersonAdapter extends BaseAdapter {
         txtPhone = v.findViewById(R.id.txtPhone);
         txtPhone.setText(person.getPhone());
 
+        /**
+         * Sets Haircolor and Programming Language respectively.
+         * Checks if value is null to avoid null-reference erros.
+         */
         txtHaircolor = v.findViewById(R.id.txtHaircolor);
         Haircolor hc = person.getHaircolor();
         if (hc != null) txtHaircolor.setText(hc.toString());
 
         txtProgLang = v.findViewById(R.id.txtProgLang);
         ProgrammingLanguage pl = person.getProgramminglanguage();
-        if (pl != null) Log.d("PL ADAPTER", pl.toString());
         if (pl != null) txtProgLang.setText(pl.toString());
-
-        // isFavorite = v.findViewById(R.id.isFavorite);
-        // isFavorite.setChecked(person.getFavorite());
 
         imgFav = v.findViewById(R.id.imgFav);
 
         setInternalFav(person);
 
+        /**
+         * Switches Favorite status on click on ImageView for the person object in question. Then calls helper to switch images.
+         */
         imgFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("Testing", "testTest");
                 person.setFavorite(!person.getFavorite());
                 setInternalFav(person);
 
@@ -165,8 +163,11 @@ public class PersonAdapter extends BaseAdapter {
         return v;
     }
 
+    /**
+     * Helper function for switching "Favorite" picture based on whether isFavorite is true or not.
+     * @param person
+     */
     private void setInternalFav(Person person) {
-        Log.d("Fav", String.valueOf(person.getFavorite()));
         if (person.getFavorite()) {
             imgFav.setImageResource(R.drawable.star_fav);
         } else {

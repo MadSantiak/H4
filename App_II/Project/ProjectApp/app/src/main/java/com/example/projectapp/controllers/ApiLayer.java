@@ -19,6 +19,19 @@ import retrofit2.Response;
 
 public class ApiLayer {
 
+    /**
+     * Generalized Comment:
+     * getXByID:
+     *      Fetches X object from Database using IXService, which in turn uses ApiLayer, sending variable (int) along in order to find the correct dataset.
+     * getAllX:
+     *      Fetches all X objects from database tabel, returns List of X objects.
+     * addX:
+     *      Adds a Person object and returns the ID of the created object
+     * delX:
+     *      Deletes a given recordset based on the ID sent along as an argument.
+     * updateX:
+     *      Updates the X object sent along as an argument.
+     */
     public static Person getPersonById (int id)
     {
         FutureTask<Person> futureTask = new FutureTask<>(new Callable<Person>() {
@@ -48,7 +61,6 @@ public class ApiLayer {
         }
         return person;
     }
-
     public static List<Person> getAllPerson() {
         FutureTask<List<Person>> futureTask = new FutureTask<>(new Callable<List<Person>>() {
             @Override
@@ -69,7 +81,6 @@ public class ApiLayer {
         List<Person> people = null;
         try {
             people = futureTask.get();
-            Log.d("People get", people.toString());
         } catch (Exception e) {
         }
         return people;
@@ -236,6 +247,31 @@ public class ApiLayer {
         }
         return hcId;
     }
+    public static void delHaircolor(int id)
+    {
+        FutureTask<Void> futureTask = new FutureTask<>(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                IHaircolorService serv = ServiceBuilder.buildService(IHaircolorService.class);
+
+                Call<Void> req = serv.delHaircolor(id);
+                try {
+                    Response<Void> response = req.execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        });
+        Thread t = new Thread(futureTask);
+        t.start();
+
+        try {
+            futureTask.get();
+        } catch (Exception e) {
+            Log.e("Thread error:", e.getMessage());
+        }
+    }
     public static List<ProgrammingLanguage> getAllProgrammingLanguage() {
         FutureTask<List<ProgrammingLanguage>> futureTask = new FutureTask<>(new Callable<List<ProgrammingLanguage>>() {
             @Override
@@ -317,4 +353,31 @@ public class ApiLayer {
         }
         return plId;
     }
+    public static void delProgrammingLanguage(int id)
+    {
+        FutureTask<Void> futureTask = new FutureTask<>(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                IProgrammingLanguageService serv = ServiceBuilder.buildService(IProgrammingLanguageService.class);
+
+                Call<Void> req = serv.delProgrammingLanguage(id);
+                try {
+                    Response<Void> response = req.execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        });
+        Thread t = new Thread(futureTask);
+        t.start();
+
+        try {
+            futureTask.get();
+        } catch (Exception e) {
+            Log.e("Thread error:", e.getMessage());
+        }
+    }
+
+
 }

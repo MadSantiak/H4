@@ -107,9 +107,7 @@ public class EditPersonActivity extends AppCompatActivity {
                 Haircolor hc = (Haircolor) spnHaircolor.getSelectedItem();
                 person.setHaircolor(hc);
 
-                Log.d("Checked button", String.valueOf(radPrg.getCheckedRadioButtonId()));
                 ProgrammingLanguage pl = (ProgrammingLanguage) ApiLayer.getProgrammingLanguageById(radPrg.getCheckedRadioButtonId());
-                Log.d("PL", pl.toString());
                 person.setProgramminglanguage(pl);
 
                 ApiLayer.updatePerson(person);

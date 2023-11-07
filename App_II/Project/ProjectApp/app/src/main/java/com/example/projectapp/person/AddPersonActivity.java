@@ -32,8 +32,6 @@ public class AddPersonActivity extends AppCompatActivity implements View.OnClick
     Button btnCreate, btnBack;
     Spinner spnHaircolor;
     RadioGroup radPrg;
-
-    RadioGroup radProgrammingLanguage;
     Person p;
 
     @Override

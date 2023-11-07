@@ -49,8 +49,6 @@ public class Person implements Serializable {
     }
 
     public ProgrammingLanguage getProgramminglanguage() {
-
-        Log.d("ProgLang", programminglanguage.getName());
         return programminglanguage;
     }
     public void setProgramminglanguage(ProgrammingLanguage programminglanguage) {
@@ -59,11 +57,9 @@ public class Person implements Serializable {
     public Haircolor getHaircolor() {
         return haircolor;
     }
-
     public void setHaircolor(Haircolor haircolor) {
         this.haircolor = haircolor;
     }
-
     public int getId() {
         return id;
     }

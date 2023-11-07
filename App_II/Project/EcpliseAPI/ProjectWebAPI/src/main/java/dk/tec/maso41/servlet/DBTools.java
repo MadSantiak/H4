@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,10 +151,22 @@ public class DBTools
             preparedStatement.setBoolean(5, person.getFavorite());
             
             Haircolor hc = person.getHaircolor();
-            preparedStatement.setInt(6, hc.getId());
+            if (hc != null) {
+            	preparedStatement.setInt(6, hc.getId());
+            }
+            else {
+            	preparedStatement.setNull(6, Types.NULL);
+            }
+            	
             
+            	
             ProgrammingLanguage pl = person.getProgramminglanguage();
-            preparedStatement.setInt(7, pl.getId());
+            if (pl != null) {
+            	preparedStatement.setInt(7,  pl.getId());
+            }
+            else {
+            	preparedStatement.setNull(7, Types.NULL);
+            }
             
             preparedStatement.executeUpdate();
             ResultSet genKey = preparedStatement.getGeneratedKeys();
@@ -196,8 +209,6 @@ public class DBTools
 			statement.setInt(6, hc.getId());
 			
 			ProgrammingLanguage pl = person.getProgramminglanguage();
-			System.out.println(pl.toString());
-			System.out.println(String.valueOf(pl.getId()));
 			statement.setInt(7, pl.getId());
 			
 			statement.executeUpdate();
@@ -273,6 +284,22 @@ public class DBTools
 		return pId;
 	}
 	
+	public void delHaircolor(int id) {
+		connect();
+		System.out.println("Deleting Haircolor " + id);
+
+		String delStr = "UPDATE Person SET haircolor_id = NULL WHERE haircolor_id = " + id 
+				+ "; DELETE FROM Haircolor WHERE id = " + id;
+
+		try {
+			stmt.executeQuery(delStr);
+			
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+	}
+	
 	public List<ProgrammingLanguage> getAllProgrammingLanguage() {
 		connect();
 		String selectStr = "SELECT * FROM ProgrammingLanguage";
@@ -300,16 +327,13 @@ public class DBTools
 		connect();
 		String selectStr = "Select * from ProgrammingLanguage where id = " + id;
 		ProgrammingLanguage lang = new ProgrammingLanguage();
-		System.out.println("PROGRAMMING LANGUAGE");
 		
 		try {
 			ResultSet result = stmt.executeQuery(selectStr);
 			if(result.next())
 			{
 				lang.setId(result.getInt("Id"));
-				System.out.println(result.getInt("Id"));
 				lang.setName(result.getString("Name"));
-				System.out.println(result.getInt("Name"));
 				con.close();
 			}
 			
@@ -340,6 +364,20 @@ public class DBTools
             e.printStackTrace();
         }
 		return pId;
+	}
+	
+	public void delProgrammingLanguage(int id) {
+		connect();
+		String delStr = "UPDATE Person SET programminglanguage_id = NULL WHERE programminglanguage_id = " + id 
+				+ "; DELETE FROM ProgrammingLanguage WHERE id = " + id;
+
+		try {
+			stmt.executeQuery(delStr);
+			
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
 	}
 	
 }
