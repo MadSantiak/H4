@@ -30,7 +30,18 @@
             />
     </LinearLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.leinardi.android.speeddial.SpeedDialView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="35dp"
+        app:sdMainFabClosedSrc="@drawable/plus"
+        android:backgroundTint="@color/design_default_color_primary"
+        android:elevation="5dp"
+        android:id="@+id/spdMenu"
+        />
+
+   <!-- <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddPerson"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,5 +51,5 @@
         android:backgroundTint="@color/design_default_color_primary"
         android:elevation="5dp"
         app:borderWidth="0dp"
-        />
+        /> -->
 </FrameLayout>

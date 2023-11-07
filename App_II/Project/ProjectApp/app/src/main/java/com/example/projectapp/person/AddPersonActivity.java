@@ -94,8 +94,13 @@ public class AddPersonActivity extends AppCompatActivity implements View.OnClick
         }
         else if (v == btnBack) {
             Intent intent = new Intent();
-            intent.putExtra("newPerson", (Serializable) p);
-            setResult(Activity.RESULT_OK, intent);
+            if (p != null) {
+                intent.putExtra("newPerson", (Serializable) p);
+                setResult(Activity.RESULT_OK, intent);
+            }
+            else {
+                setResult(Activity.RESULT_CANCELED, intent);
+            }
             finish();
         }
 

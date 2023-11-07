@@ -209,6 +209,33 @@ public class ApiLayer {
         }
         return haircolor;
     }
+    public static Integer addHaircolor(Haircolor hc)
+    {
+        FutureTask<Integer> futureTask = new FutureTask<>(new Callable<Integer>() {
+            @Override
+            public Integer call() throws Exception {
+                Integer i = null;
+                IHaircolorService serv = ServiceBuilder.buildService(IHaircolorService.class);
+
+                Call<Integer> req = serv.addHaircolor(hc);
+                try {
+                    i = req.execute().body();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return i;
+            }
+        });
+        Thread t = new Thread(futureTask);
+        t.start();
+        Integer hcId = null;
+        try {
+            hcId = futureTask.get();
+        } catch (Exception e) {
+            Log.e("Thread error:", e.getMessage());
+        }
+        return hcId;
+    }
     public static List<ProgrammingLanguage> getAllProgrammingLanguage() {
         FutureTask<List<ProgrammingLanguage>> futureTask = new FutureTask<>(new Callable<List<ProgrammingLanguage>>() {
             @Override
@@ -263,5 +290,31 @@ public class ApiLayer {
         }
         return prglng;
     }
+    public static Integer addProgrammingLanguage(ProgrammingLanguage pl)
+    {
+        FutureTask<Integer> futureTask = new FutureTask<>(new Callable<Integer>() {
+            @Override
+            public Integer call() throws Exception {
+                Integer i = null;
+                IProgrammingLanguageService serv = ServiceBuilder.buildService(IProgrammingLanguageService.class);
 
+                Call<Integer> req = serv.addProgrammingLanguage(pl);
+                try {
+                    i = req.execute().body();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return i;
+            }
+        });
+        Thread t = new Thread(futureTask);
+        t.start();
+        Integer plId = null;
+        try {
+            plId = futureTask.get();
+        } catch (Exception e) {
+            Log.e("Thread error:", e.getMessage());
+        }
+        return plId;
+    }
 }

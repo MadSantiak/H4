@@ -16,6 +16,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".programming_language.AddProgrammingLanguageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".haircolor.AddHaircolorActivity"
+            android:exported="false" />
+        <activity
             android:name=".person.EditPersonActivity"
             android:exported="false" />
         <activity

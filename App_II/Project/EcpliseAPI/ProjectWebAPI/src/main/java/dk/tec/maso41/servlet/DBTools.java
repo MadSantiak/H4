@@ -251,6 +251,28 @@ public class DBTools
 		}
 		return haircolor;
 	}	
+	
+	public Integer addHaircolor(Haircolor haircolor) {
+		Integer pId = null;
+		
+		connect();
+		String insertStr = "INSERT INTO Haircolor (name) VALUES (?)";
+		try (PreparedStatement preparedStatement = con.prepareStatement(insertStr, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, haircolor.getName());
+            
+            preparedStatement.executeUpdate();
+            ResultSet genKey = preparedStatement.getGeneratedKeys();
+            if (genKey.next()) {
+            	pId = genKey.getInt(1);
+            }
+            con.commit();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+		return pId;
+	}
+	
 	public List<ProgrammingLanguage> getAllProgrammingLanguage() {
 		connect();
 		String selectStr = "SELECT * FROM ProgrammingLanguage";
@@ -298,5 +320,26 @@ public class DBTools
 		
 		return lang;
 	}	
+	
+	public Integer addProgrammingLanguage(ProgrammingLanguage pl) {
+		Integer pId = null;
+		
+		connect();
+		String insertStr = "INSERT INTO ProgrammingLanguage (name) VALUES (?)";
+		try (PreparedStatement preparedStatement = con.prepareStatement(insertStr, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, pl.getName());
+            
+            preparedStatement.executeUpdate();
+            ResultSet genKey = preparedStatement.getGeneratedKeys();
+            if (genKey.next()) {
+            	pId = genKey.getInt(1);
+            }
+            con.commit();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+		return pId;
+	}
 	
 }

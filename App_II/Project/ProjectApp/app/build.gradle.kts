@@ -29,6 +29,7 @@ android {
 }
 
 dependencies {
+    implementation("com.leinardi.android:speed-dial:3.3.0")
     implementation("com.squareup.retrofit2:retrofit:2.3.0")
     implementation("com.squareup.retrofit2:converter-gson:2.3.0")
     implementation("androidx.appcompat:appcompat:1.6.1")

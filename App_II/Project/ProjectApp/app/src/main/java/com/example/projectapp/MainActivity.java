@@ -12,24 +12,32 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.projectapp.controllers.ApiLayer;
+import com.example.projectapp.haircolor.AddHaircolorActivity;
+import com.example.projectapp.haircolor.Haircolor;
 import com.example.projectapp.person.AddPersonActivity;
 import com.example.projectapp.person.Person;
 import com.example.projectapp.person.PersonAdapter;
+import com.example.projectapp.programming_language.AddProgrammingLanguageActivity;
+import com.example.projectapp.programming_language.ProgrammingLanguage;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.leinardi.android.speeddial.SpeedDialActionItem;
+import com.leinardi.android.speeddial.SpeedDialView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SpeedDialView.OnActionSelectedListener {
 
     ListView listPpl;
     FloatingActionButton fabAddPerson;
+    SpeedDialView spdMenu;
     PersonAdapter personAdapter;
     List<Person> persons = new ArrayList<>();
 
-    ActivityResultLauncher<Intent> addPersonActivityLauncher, editPersonActivityLauncher;
+    ActivityResultLauncher<Intent> addPersonActivityLauncher, editPersonActivityLauncher, addHaircolorActivityLauncher, addProgrammingLanguageActivityLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,15 +46,15 @@ public class MainActivity extends AppCompatActivity {
         listPpl = findViewById(R.id.listPpl);
         persons = ApiLayer.getAllPerson();
 
-        fabAddPerson = findViewById(R.id.fabAddPerson);
-        fabAddPerson.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AddPersonActivity.class);
+        spdMenu = findViewById(R.id.spdMenu);
+        spdMenu.addActionItem(new SpeedDialActionItem.Builder(R.id.itemAddPerson, R.drawable.account_plus)
+                .create());
+        spdMenu.addActionItem(new SpeedDialActionItem.Builder(R.id.itemAddHaircolor, R.drawable.long_wavy_hair_variant)
+                .create());
+        spdMenu.addActionItem(new SpeedDialActionItem.Builder(R.id.itemAddProgLang, R.drawable.coding)
+                .create());
+        spdMenu.setOnActionSelectedListener(this);
 
-                addPersonActivityLauncher.launch(intent);
-            }
-        });
 
         addPersonActivityLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -78,9 +86,56 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
+        addHaircolorActivityLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult o) {
+                        if (o.getResultCode() == Activity.RESULT_OK)
+                        {
+                            Intent res = o.getData();
+                            Haircolor hc = (Haircolor) res.getSerializableExtra("newHaircolor");
+                            Toast.makeText(MainActivity.this, "Created new Haircolor: " + hc.toString(), Toast.LENGTH_LONG)
+                                    .show();
+                        }
+                    }
+                }
+        );
+        addProgrammingLanguageActivityLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult o) {
+                        if (o.getResultCode() == Activity.RESULT_OK)
+                        {
+                            Intent res = o.getData();
+                            ProgrammingLanguage pl = (ProgrammingLanguage) res.getSerializableExtra("newProgrammingLanguage");
+                            Toast.makeText(MainActivity.this, "Created new Programming Language: " + pl.toString(), Toast.LENGTH_LONG)
+                                    .show();
+                        }
+                    }
+                }
+        );
         personAdapter = new PersonAdapter(persons, this, editPersonActivityLauncher);
 
         listPpl.setAdapter(personAdapter);
 
+    }
+
+    @Override
+    public boolean onActionSelected(SpeedDialActionItem actionItem) {
+        if (actionItem.getId() == R.id.itemAddPerson) {
+            Intent intent = new Intent(MainActivity.this, AddPersonActivity.class);
+            addPersonActivityLauncher.launch(intent);
+        }
+        if (actionItem.getId() == R.id.itemAddHaircolor) {
+            Intent intent = new Intent(MainActivity.this, AddHaircolorActivity.class);
+            addHaircolorActivityLauncher.launch(intent);
+        }
+        if (actionItem.getId() == R.id.itemAddProgLang) {
+            Intent intent = new Intent(MainActivity.this, AddProgrammingLanguageActivity.class);
+            addProgrammingLanguageActivityLauncher.launch(intent);
+        }
+        return true;
     }
 }

@@ -88,12 +88,39 @@ public class ProjectServlet extends HttpServlet {
 		DBTools db = new DBTools();
 		BufferedReader reader = req.getReader();
 		String recJSON = reader.readLine();
-		System.out.println(recJSON);
 		ObjectMapper mapper = new ObjectMapper();
-		Person p = mapper.readValue(recJSON, Person.class);
-		String resInt = mapper.writeValueAsString(db.addPerson(p));
-		System.out.println(resInt);
-		out.print(resInt);
+		AnalyzeRequest analyze = new AnalyzeRequest(req.getPathInfo());
+		
+		switch(analyze.getMatch())
+		{
+			case MatchPerson:
+				Person p = mapper.readValue(recJSON, Person.class);
+				String resPerson = mapper.writeValueAsString(db.addPerson(p));
+				out.print(resPerson);
+				break;
+			case MatchHaircolor:
+				Haircolor hc = mapper.readValue(recJSON, Haircolor.class);
+				String resHaircolor = mapper.writeValueAsString(db.addHaircolor(hc));
+				out.print(resHaircolor);
+				break;
+			case MatchProgrammingLanguage:
+				ProgrammingLanguage pl = mapper.readValue(recJSON, ProgrammingLanguage.class);
+				String resProgLang = mapper.writeValueAsString(db.addProgrammingLanguage(pl));
+				out.print(resProgLang);
+				break;
+			case MatchHaircolorId:
+				break;
+			case MatchNo:
+				break;
+			case MatchPersonId:
+				break;
+			case MatchProgrammingLanguageId:
+				break;
+			default:
+				break;
+		}
+		
+		
 		
 	}
 
