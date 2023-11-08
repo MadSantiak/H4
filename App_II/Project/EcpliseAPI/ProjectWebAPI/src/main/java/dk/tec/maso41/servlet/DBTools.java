@@ -16,8 +16,6 @@ import dk.tec.maso41.ProgrammingLanguage;
 
 public class DBTools 
 {
-	//private String conStr = "jdbc:sqlserver://localhost;databaseName=ProjectAPI;encrypt=true;trustServerCertificate=true";
-	//private String conStr = "jdbc:sqlserver://DESKTOP-3L6VNNS:1433;databaseName=ProjectAPI;user=sa;password=test;";
     private String conStr = "jdbc:sqlserver://localhost:1433;databaseName=ProjectAPI;encrypt=true;trustServerCertificate=true";
 	Connection con;
 	Statement stmt;
@@ -41,11 +39,13 @@ public class DBTools
 		}	
 	}
 	
+	/**
+	 * Gets a specific recordset from the DB, based on the ID 
+	 * sent along in the request (path)
+	 * @param id
+	 * @return
+	 */
 	public Person getPersonById(int id) {
-		/**
-		 * Gets a specific recordset from the DB, based on the ID 
-		 * sent along in the request (path)
-		 */
 		connect();
 		String selectStr = "SELECT p.*, "
 				+ "h.id AS haircolor_id, "
@@ -84,13 +84,15 @@ public class DBTools
 		return person;
 	}	
 	
+	/**
+	 * Gets all Person objects, joined with Haircolor and ProgrammingLanguage tables,
+	 * in order to avoid unnecessary performance hits when generating a list view of Persons, including their haircolor and programming language,
+	 * which would otherwise necessitate a corresponding call to the database to fetch each individual color/language, per person in the list,
+	 * increasing the load linearly (noticeably so).
+	 * @return
+	 */
 	public List<Person> getAllPerson() {
-		/**
-		 * Gets all Person objects in Database
-		 * Returns them as a List
-		 */
 		connect();
-		// String selectStr = "SELECT * FROM Person";
 		String selectStr = 
 				"SELECT p.*, "
 				+ "h.id AS haircolor_id, "
@@ -134,11 +136,15 @@ public class DBTools
 		
 	}
 	
+	/**
+	 * Adds a person object to the database, getting the persons fields to populate the query creating it in the database.
+	 * Note the check on the persons Haircolor and Prg. Language, as these are nullable, and thus might not except setInt(), as there is no record to getId() from.
+	 * Hence the addition of "setNull", using Types.NULL (0) for clarity.
+	 * Returns the ID of the created record for display in the App.
+	 * @param person
+	 * @return
+	 */
 	public Integer addPerson(Person person) {
-		/**
-		 * Prepares an SQL query with open variables, which are subsequently populated,
-		 * using the get-methods available in the Person class.
-		 */
 		Integer pId = null;
 		
 		connect();
@@ -180,7 +186,11 @@ public class DBTools
         }
 		return pId;
 	}
-	
+
+	/**
+	 * Deletes a person from the database. Not much else to say.
+	 * @param id
+	 */
 	public void delPerson(int id) {
 		connect();
 		String delStr = "DELETE FROM Person WHERE id = " + id;
@@ -194,6 +204,10 @@ public class DBTools
 		}
 	}
 	
+	/**
+	 * Updates pereson record based on the changed object contained in the request.
+	 * @param person
+	 */
 	public void updatePerson(Person person) {
 		connect();
 		int id = person.getId();
@@ -219,6 +233,10 @@ public class DBTools
 		}
 	}
 	
+	/**
+	 * Same as above.
+	 * @return
+	 */
 	public List<Haircolor> getAllHaircolor() {
 		connect();
 		String selectStr = "SELECT * FROM Haircolor";
@@ -239,10 +257,6 @@ public class DBTools
 	}
 	
 	public Haircolor getHaircolorById(int id) {
-		/**
-		 * Gets a specific recordset from the DB, based on the ID 
-		 * sent along in the request (path)
-		 */
 		connect();
 		String selectStr = "Select * from Haircolor where id = " + id;
 		Haircolor haircolor = new Haircolor();
@@ -284,10 +298,14 @@ public class DBTools
 		return pId;
 	}
 	
+	/**
+	 * Deletes a haircolor.
+	 * Note to avoid constraints, we first find the Person objects bound to the haircolor record in question, and set them to NULL
+	 * before deleting the record from the table.
+	 * @param id
+	 */
 	public void delHaircolor(int id) {
 		connect();
-		System.out.println("Deleting Haircolor " + id);
-
 		String delStr = "UPDATE Person SET haircolor_id = NULL WHERE haircolor_id = " + id 
 				+ "; DELETE FROM Haircolor WHERE id = " + id;
 
@@ -299,7 +317,11 @@ public class DBTools
 			e.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * These are all the same as the above functions, see those for description.
+	 * @return
+	 */
 	public List<ProgrammingLanguage> getAllProgrammingLanguage() {
 		connect();
 		String selectStr = "SELECT * FROM ProgrammingLanguage";

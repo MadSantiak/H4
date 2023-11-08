@@ -38,6 +38,19 @@ public class Person implements Serializable {
         this.favorite = favorite;
         this.haircolor = haircolor;
     }
+
+    /**
+     * Final Constructor; note for the sake of historics, the previous constructors made relevant throughout development
+     * have been kept intact. This also to (theoretically) avoid errors caused by inconsistencies between parameters and arguments on potentially antiquated
+     * object instantiations.
+     * @param name
+     * @param phone
+     * @param address
+     * @param note
+     * @param favorite
+     * @param haircolor
+     * @param programminglanguage
+     */
     public Person(String name, String phone, String address, String note, boolean favorite, Haircolor haircolor, ProgrammingLanguage programminglanguage) {
         this.name = name;
         this.phone = phone;

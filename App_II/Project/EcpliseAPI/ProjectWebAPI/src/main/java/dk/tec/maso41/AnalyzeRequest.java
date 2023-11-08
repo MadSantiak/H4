@@ -16,6 +16,12 @@ public class AnalyzeRequest {
 		return id;
 	}
 	
+	/**
+	 * We analyse the request sent to the API so we know whether the GET/POST/DELETE/PUT
+	 * is in regards to a Person, Haircolor or Programming Language.
+	 * Note we take the potential for IDs first to avoid false-positives, should we check generalized paths first.
+	 * @param pathInfo
+	 */
 	public AnalyzeRequest(String pathInfo) {
 		Matcher personMatcher = Pattern.compile("/Person/([0-9]+)").matcher(pathInfo);
 		Matcher colorMatcher = Pattern.compile("/Haircolor/([0-9]+)").matcher(pathInfo);

@@ -56,9 +56,16 @@ public class EditPersonActivity extends AppCompatActivity {
         // RadioButton setup
         List<ProgrammingLanguage> prgLangs = ApiLayer.getAllProgrammingLanguage();
         radPrg = findViewById(R.id.radPrg);
+
+        /**
+         * Dynamically creates RadioButtons corresponding to the number of items in the list of ProgrammingLanguages.
+         * ID of the buttons are set to the ID of the Programming Language record.
+         * Note this originally used i+1, but this only worked so long as ProgrammingLanguage table remained consistent, due to incremental ID
+         * potentially leading to gaps in ID sequences, thus invalidating such an approach.
+         */
         for (int i = 0; i < prgLangs.size(); i++) {
             RadioButton option = new RadioButton(this);
-            option.setId(i+1);
+            option.setId(prgLangs.get(i).getId());
             option.setText(prgLangs.get(i).getName());
             radPrg.addView(option);
         }
@@ -76,6 +83,11 @@ public class EditPersonActivity extends AppCompatActivity {
             txtNote.setText(person.getNote());
             isFavorite.setChecked(person.getFavorite());
 
+            /**
+             * Purpose of these two iterations is to find the "original" value from the Person object that is being edited.
+             * One could have overridden their individual "equals()" function to ensure the objects "id" field were compared,
+             * but I opted for this approach as it is a bit clearer what is happening in terms of data manipulation
+             */
             Haircolor hc = person.getHaircolor();
             if (hc != null) {
                 for (int i = 0; i < haircolors.size(); i++) {
@@ -99,11 +111,15 @@ public class EditPersonActivity extends AppCompatActivity {
         btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /**
+                 * We blatantly write every field with "new" data, rather than checking if there is a difference.
+                 */
                 person.setName(txtName.getText().toString());
                 person.setAddress(txtAddress.getText().toString());
                 person.setPhone(txtPhone.getText().toString());
                 person.setNote(txtNote.getText().toString());
                 person.setFavorite(isFavorite.isChecked());
+
                 Haircolor hc = (Haircolor) spnHaircolor.getSelectedItem();
                 person.setHaircolor(hc);
 

@@ -47,6 +47,7 @@ public class AddPersonActivity extends AppCompatActivity implements View.OnClick
         isFavorite = findViewById(R.id.isFavorite);
         btnCreate = findViewById(R.id.btnCreate);
         btnBack = findViewById(R.id.btnBack);
+
         // Establish and populate Spinner for Haircolor:
         spnHaircolor = findViewById(R.id.spnHaircolor);
 
@@ -60,7 +61,7 @@ public class AddPersonActivity extends AppCompatActivity implements View.OnClick
         List<ProgrammingLanguage> progLangs = ApiLayer.getAllProgrammingLanguage();
         for (int i = 0; i < progLangs.size(); i++) {
             RadioButton option = new RadioButton(this);
-            option.setId(i+1);
+            option.setId(progLangs.get(i).getId()); //Reconfigured to be table ID sequence agnostic (as opposed to iteration-dependent).
             option.setText(progLangs.get(i).getName());
             radPrg.addView(option);
         }

@@ -32,6 +32,17 @@ public class Person {
         this.favorite = favorite;
         this.haircolor = haircolor;
     }
+    /**
+     * As stated in the App code; this is the "final" constructor. The ones listed above are from previous steps in the assignment.
+     * Kept for the sake of safety, in case any straggling constructor calls might still use the previous number of arguments.
+     * @param name
+     * @param phone
+     * @param address
+     * @param note
+     * @param favorite
+     * @param haircolor
+     * @param programminglanguage
+     */
     public Person(String name, String phone, String address, String note, boolean favorite, Haircolor haircolor, ProgrammingLanguage programminglanguage) {
         this.name = name;
         this.phone = phone;

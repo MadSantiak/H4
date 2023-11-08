@@ -28,11 +28,12 @@ public class ProjectServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		/**
-		 * Allows the API to call get-methods.
+		 * Allows the API to respond to get-methods.
 		 * Using AnalyzeRequest to parse whether the request is asking for "All Persons"
 		 * or a specific recordset.
 		 * Using ObjectMapper to write the data in the response to be read by the
 		 * App's ApiLayer.
+		 * Expanded to allow for additional Object types (Haircolor and Programming language)
 		 */
 		PrintWriter out = response.getWriter();
 		AnalyzeRequest analyze = new AnalyzeRequest(request.getPathInfo());
@@ -78,12 +79,11 @@ public class ProjectServlet extends HttpServlet {
 			}
 		}
 	
+	/**
+	 * Responds to POST-requests, calling the corresponding functions in DBTools to create the object requested.
+	 */
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		/**
-		 * Allows the App to call the API and essentially create a Person object
-		 * via the DBTools addPerson() function.
-		 */
 		PrintWriter out = resp.getWriter();
 		DBTools db = new DBTools();
 		BufferedReader reader = req.getReader();
@@ -116,14 +116,15 @@ public class ProjectServlet extends HttpServlet {
 		
 	}
 
+	/**
+	 * Allows the App to call the API and then, via the DBtools class
+	 * instruct the database to remove the row with the ID fetched from the 
+	 * Person object in question, passed along in the Path of the request,
+	 * which is finally extracted using the AnalyseRequest class.
+	 * Expanded to include other Object types.
+	 */
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		/**
-		 * Allows the App to call the API and then, via the DBtools class
-		 * instruct the database to remove the row with the ID fetched from the 
-		 * Person object in question, passed along in the Path of the request,
-		 * which is finally extracted using the AnalyseRequest class.
-		 */
 		AnalyzeRequest analyze = new AnalyzeRequest(req.getPathInfo());
 		DBTools db = new DBTools();
 		int delId = analyze.getId();
@@ -148,6 +149,10 @@ public class ProjectServlet extends HttpServlet {
 		}
 	}
 
+	/**
+	 * Not expanded as only "Persons" can be updated in the App, and the option to update Person or Programming Language objects
+	 * was deemed irrelevant, semantically speaking (we presume people proofread names when they create new color designations/programming languages).
+	 */
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		AnalyzeRequest analyze = new AnalyzeRequest(req.getPathInfo());

@@ -72,6 +72,9 @@ public class PersonAdapter extends BaseAdapter {
         LayoutInflater inflater = LayoutInflater.from(main);
         View v = inflater.inflate(R.layout.custom_person,null);
 
+        /**
+         * Just some fluff to give some visual flair to the list; alternates backgroud color every other entry.
+         */
         if (position % 2 == 0)
         {
             v.setBackgroundResource(R.color.light_grey);

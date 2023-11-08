@@ -73,6 +73,9 @@ public class MainActivity extends AppCompatActivity implements SpeedDialView.OnA
         toolbarMenu = findViewById(R.id.toolbarMenu);
         setSupportActionBar(toolbarMenu);
 
+        /**
+         * Activity launchers so we can fetch/respond to data changes
+         */
         addPersonActivityLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
@@ -95,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements SpeedDialView.OnA
                     public void onActivityResult(ActivityResult o) {
                         if (o.getResultCode() == Activity.RESULT_OK)
                         {
-                            Intent upd = o.getData();
                             persons.clear();
                             persons.addAll(ApiLayer.getAllPerson());
                             personAdapter.notifyDataSetChanged();
@@ -158,6 +160,11 @@ public class MainActivity extends AppCompatActivity implements SpeedDialView.OnA
                     }
                 }
         );
+        /**
+         * Note we pass the "editPerson.." activity launcher along to the PersonAdapter, so we can update the main view
+         * when the Person object is updated.
+         * In essence, we want the PersonAdapter to use an activity launcher known by the MainActivity, so we can respond to the result generally, and thus update the view accordingly.
+         */
         personAdapter = new PersonAdapter(persons, this, editPersonActivityLauncher);
 
         listPpl.setAdapter(personAdapter);
@@ -165,6 +172,14 @@ public class MainActivity extends AppCompatActivity implements SpeedDialView.OnA
 
     }
 
+    /**
+     * Launches [C]RUD functionality for relevant classes, allowing the creating of new a new
+     * (1) Person
+     * (2) Haircolor
+     * (3) Programming Language.
+     * @param actionItem the {@link SpeedDialActionItem} that was selected.
+     * @return
+     */
     @Override
     public boolean onActionSelected(SpeedDialActionItem actionItem) {
         if (actionItem.getId() == R.id.itemAddPerson) {
@@ -183,12 +198,28 @@ public class MainActivity extends AppCompatActivity implements SpeedDialView.OnA
     }
 
 
+    /**
+     * This creates the "hamburger menu" at the top right of the App, using the items defined in main_menu.xml as options
+     * @param menu The options menu in which you place your items.
+     *
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
 
+    /**
+     * Response to selection of main_menu item selection in hamburger menu,
+     * launching the respective acitivies which store their individual custom adapter views
+     * in order to facilitate the establishment of CRUD functionality.
+     * Note, however, that only "Delete" functionality is added as of assignment hand-in, as proof-of-concept.
+     * "Create" is handled via SpeedDial menu options further up.
+     * @param item The menu item that was selected.
+     *
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menuHaircolor) {
