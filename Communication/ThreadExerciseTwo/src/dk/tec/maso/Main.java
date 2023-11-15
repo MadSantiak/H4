@@ -3,8 +3,9 @@ package dk.tec.maso;
 import java.util.Scanner;
 
 public class Main {
-	Data data = new Data();;
+	Data data = new Data();
 	Scanner scanner = new Scanner(System.in);
+	
 	Object nameLock = new Object();
 	Object countLock = new Object();;
 	
@@ -14,7 +15,6 @@ public class Main {
 				System.out.println("Enter name: ");
 				String strName = scanner.nextLine();
 				data.name = strName;
-				
 				if (strName.toLowerCase().equals("jan"))
 				{
 					data.stop = true;
