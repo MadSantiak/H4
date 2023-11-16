@@ -1,4 +1,4 @@
-package dk.tec.maso.server;
+package dk.tec.maso.client;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -39,6 +39,14 @@ public class PlayerClient extends JFrame implements MouseListener, MouseMotionLi
 		return gameStarted;
 	}
 
+	/**
+	 * Helper method used to set a boolean field
+	 * which is then later used to check if the game is started
+	 * specifically whether "dragging" is allowed yet (checked when "pressed").
+	 * It is called by the ServerListener when the GameServer
+	 * detects all necessary players have connected
+	 * @param gameStarted
+	 */
 	synchronized public void setGameStarted(boolean gameStarted) {
 		this.gameStarted = gameStarted;
 		if (gameStarted) {
@@ -59,6 +67,12 @@ public class PlayerClient extends JFrame implements MouseListener, MouseMotionLi
         }
 	}
 
+	/**
+	 * Helper method used to set the position of the "Enemy" box,
+	 * this is called by the ServeListener when the correct prompt is received.
+	 * @param x
+	 * @param y
+	 */
 	synchronized public void setEnemyPosition(int x, int y) {
 		this.xEnemy = x;
 		this.yEnemy = y;

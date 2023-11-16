@@ -1,4 +1,4 @@
-package dk.tec.maso.server;
+package dk.tec.maso.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,7 +23,6 @@ public class ServerListener implements Runnable {
 					String[] positions = msg.split(",");
 					int xPos = Integer.parseInt(positions[0]);
 					int yPos = Integer.parseInt(positions[1]);
-					System.out.println("Setting position..");
 					client.setEnemyPosition(xPos, yPos);
 				}
 			}
