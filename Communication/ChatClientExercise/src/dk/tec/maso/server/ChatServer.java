@@ -1,6 +1,7 @@
 package dk.tec.maso.server;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -10,9 +11,11 @@ public class ChatServer {
 	public static ArrayList<Socket> sockets = new ArrayList<>();
 	public static ClientMessage dataMessage = new ClientMessage(); 
 	
-	
 	public static void main(String[] args) {
+		System.out.println("Server started..");
+		
 		Thread t1 = new Thread(new SendAll(sockets, dataMessage));
+		t1.start();
 		
 		try (ServerSocket serverSocket = new ServerSocket(2000))
 		{
@@ -21,13 +24,28 @@ public class ChatServer {
 			while(true) {
 				s = serverSocket.accept();
 				sockets.add(s);
+				updateClientCount();
 				cw = new ClientWorker(s, dataMessage);
 				Thread t2 = new Thread(cw);
 				t2.start();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+		} 
+	}
+	public static synchronized void updateClientCount() {
+		int users = sockets.size();
+		for (Socket s : sockets) {
+			try {
+				PrintWriter out = new PrintWriter(s.getOutputStream(), true);
+				out.println("USERS " + users);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+	}
+	public static synchronized void removeSocket(Socket s) {
+		sockets.remove(s);
 	}
 
 }

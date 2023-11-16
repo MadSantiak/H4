@@ -4,6 +4,6 @@
 /**
  * 
  */
-module ChatClientExercise {
+module DemoJavaGraphics {
 	requires java.desktop;
 }

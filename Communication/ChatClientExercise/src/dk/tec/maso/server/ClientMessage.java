@@ -4,16 +4,16 @@ public class ClientMessage {
 	String message;
 	boolean newMessage;
 	
-	public String getMessage() {
+	synchronized public String getMessage() {
 		return message;
 	}
-	public void setMessage(String message) {
+	synchronized public void setMessage(String message) {
 		this.message = message;
 	}
-	public boolean isNewMessage() {
+	synchronized public boolean isNewMessage() {
 		return newMessage;
 	}
-	public void setNewMessage(boolean newMessage) {
+	synchronized public void setNewMessage(boolean newMessage) {
 		this.newMessage = newMessage;
 	}
 	

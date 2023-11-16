@@ -36,7 +36,7 @@ public class SocketServer {
 		// For each "writer" in the list "writers", we send the message (msg):
 		for (PrintWriter writer : writers)
 		{
-			writer.println(msg + "\n");
+			writer.println(msg);
 		}
 	}
 

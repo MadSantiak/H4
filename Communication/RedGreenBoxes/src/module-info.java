@@ -4,6 +4,6 @@
 /**
  * 
  */
-module ChatClientExercise {
+module RedGreenBoxes {
 	requires java.desktop;
 }
