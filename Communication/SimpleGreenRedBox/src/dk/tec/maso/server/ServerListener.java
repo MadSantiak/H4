@@ -6,27 +6,28 @@ import java.io.IOException;
 public class ServerListener implements Runnable {
 	private BufferedReader reader;
 	private PlayerClient client;
-	
+
 	public ServerListener(BufferedReader reader, PlayerClient client) {
 		this.reader = reader;
 		this.client = client;
 	}
-	
+
 	public void run() {
 		try {
-			String msgFromServer;
-			while ((msgFromServer = reader.readLine()) != null) {
-//				client.txtReceived.setText(client.txtReceived.getText() + msgFromServer + "\n");
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				System.out.println(msgFromServer);
+			while (true) {
+				String msg = reader.readLine();
+				if (msg.equals("game_start")) {
+					client.setGameStarted(true);
+				} else {
 
-			} 
-		}catch (IOException e) {
+					String[] positions = msg.split(",");
+					int xPos = Integer.parseInt(positions[0]);
+					int yPos = Integer.parseInt(positions[1]);
+					System.out.println("Setting position..");
+					client.setEnemyPosition(xPos, yPos);
+				}
+			}
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

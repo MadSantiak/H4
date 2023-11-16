@@ -1,5 +1,6 @@
 package dk.tec.maso.server;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
@@ -12,6 +13,10 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.SwingConstants;
+import javax.swing.Timer;
 
 
 public class PlayerClient extends JFrame implements MouseListener, MouseMotionListener  {
@@ -20,6 +25,7 @@ public class PlayerClient extends JFrame implements MouseListener, MouseMotionLi
 	BufferedReader in;
 	PrintWriter out;
 	
+	
 	int xPos = 100;
 	int yPos = 100;
 	int xPrev, yPrev;
@@ -27,6 +33,37 @@ public class PlayerClient extends JFrame implements MouseListener, MouseMotionLi
 	int yEnemy = 250;
 	int size = 50;
 	boolean dragging;
+	boolean gameStarted;
+	
+	public boolean isGameStarted() {
+		return gameStarted;
+	}
+
+	synchronized public void setGameStarted(boolean gameStarted) {
+		this.gameStarted = gameStarted;
+		if (gameStarted) {
+            JLabel start = new JLabel("Game is starting!");
+            client.add(start, BorderLayout.CENTER);
+            start.setBounds((getWidth() - 150) / 2, getHeight() / 2, 150, 20);
+            start.setHorizontalAlignment(SwingConstants.CENTER);
+
+            try {
+				Thread.sleep(2000);
+				client.remove(start);
+				client.revalidate();
+				repaint();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+           
+        }
+	}
+
+	synchronized public void setEnemyPosition(int x, int y) {
+		this.xEnemy = x;
+		this.yEnemy = y;
+		repaint();
+	}
 	
 	public static void main(String[] args) {
 		client = new PlayerClient();
@@ -66,7 +103,8 @@ public class PlayerClient extends JFrame implements MouseListener, MouseMotionLi
 		int x = e.getX();
 		int y = e.getY();
 		if (x > xPos && x < xPos + size &&
-			y > yPos && y < yPos + size) 
+			y > yPos && y < yPos + size &&
+			gameStarted) 
 		{
 			
 			dragging = true;
@@ -86,13 +124,7 @@ public class PlayerClient extends JFrame implements MouseListener, MouseMotionLi
 			
 			xPrev = x;
 			yPrev = y;
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			System.out.println(xPos);
+
 			out.println(xPos + "," + yPos);
 			repaint();
 		}

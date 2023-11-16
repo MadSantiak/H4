@@ -28,7 +28,7 @@ public class PlayerWorker implements Runnable {
 			while(true)
 			{
 				msg = in.readLine();
-				GameServer.sendPosition(msg);
+				GameServer.sendPosition(msg, writer);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
