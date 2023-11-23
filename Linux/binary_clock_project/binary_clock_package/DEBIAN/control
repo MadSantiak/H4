@@ -1,0 +1,6 @@
+Package: binary-clock
+Version: 1.0
+Architecture: all
+Maintainer: Mads Soendergaard <maso41@elev.tec.dk>
+Description: Binary Clock
+ Contains binary clock with various settings and an api for humidity and temperature
