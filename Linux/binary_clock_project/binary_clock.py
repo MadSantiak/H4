@@ -44,8 +44,6 @@ horizontal = True
 meridiem_format = False
 scroll_speed = 0.08
 
-
-scroll_speed = 0.08
 hat.clear()
 
 def signal_handler(signal, frame):
@@ -90,9 +88,9 @@ def display_binary(value, row, color):
 
 def display_binary_vertical(value, column, color):
 	"""
-Helper function used to iterate value of passed time-part.
-Sets pixel vertically (by column)
-"""
+	Helper function used to iterate value of passed time-part.
+	Sets pixel vertically (by column)
+	"""
 	value = int(value)
 	binary_str = "{:08b}".format(value)
 	for x in range(0, 8):
@@ -103,9 +101,9 @@ Sets pixel vertically (by column)
 
 def switch_listener(event):
 	"""
-Listens for events on the HAT Joystick.
-Used to set various settings for the clock (orientation, format)
-"""
+	Listens for events on the HAT Joystick.
+	Used to set various settings for the clock (orientation, format)
+	"""
 	global horizontal
 	global meridiem_format  
 	if event.action == 'pressed':
