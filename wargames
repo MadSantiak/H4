@@ -1,0 +1,127 @@
+Level 7: z7WtoNQU2XfjmMtWA8u5rN4vzqu4v99S
+Level 8: TESKZC0XvTetK0S9xNwm25STk5iWrBvP
+
+bandit9@bandit:~$ strings data.txt | grep "=="
+x]T========== theG)"
+========== passwordk^
+========== is
+========== G7w8LIi6J3kTb8A7j9LgrywtEUlyyp6s
+
+
+10:
+bandit10@bandit:~$ base64 --decode data.txt 
+The password is 6zPeziLdR2RKNdNYFNb6nVCKzphlXHBM
+
+JVNBBFSmZwKKOP0XbFXOoW8chDz5yVRv
+
+
+data6.bin
+bandit12@bandit:/tmp/smt3$ file data6.bin
+data6.bin: bzip2 compressed data, block size = 900k
+bandit12@bandit:/tmp/smt3$ bunzip2 data6.bin
+bunzip2: Can't guess original name for data6.bin -- using data6.bin.out
+bandit12@bandit:/tmp/smt3$ file data6.bin.out
+data6.bin.out: POSIX tar archive (GNU)
+bandit12@bandit:/tmp/smt3$ tar -xvf data6.bin.out
+data8.bin
+bandit12@bandit:/tmp/smt3$ file data8.bin
+data8.bin: gzip compressed data, was "data9.bin", last modified: Thu Oct  5 06:19:20 2023, max compression, from Unix, original size modulo 2^32 49
+bandit12@bandit:/tmp/smt3$ mv data8 data9.bin.gz
+mv: cannot stat 'data8': No such file or directory
+bandit12@bandit:/tmp/smt3$ mv data8.bin data9.bin.gz
+bandit12@bandit:/tmp/smt3$ gzip -d data9.bin.gz 
+bandit12@bandit:/tmp/smt3$ file data9.bin
+data9.bin: ASCII text
+bandit12@bandit:/tmp/smt3$ cat data9.bin 
+The password is wbWdlBxEir4CaE8LaPhauuOo6pwRmrDw
+
+Password for lvl13: wbWdlBxEir4CaE8LaPhauuOo6pwRmrDw
+14: fGrHPx402xGC7U7rXKDaxiWFTOiF0ENq (ssh, remember port!)
+
+Password for level 15:
+bandit14@bandit:~$ telnet localhost 30000
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+fGrHPx402xGC7U7rXKDaxiWFTOiF0ENq
+Correct!
+jN2kgmIXJ6fShzhT2avhotn4Zcka6tnt
+
+Level 15 - > 16:
+Connect via openssl s_client -connect, and submit previous password. gets:
+JQttfApK4SeyHwDlI9SXGR50qclOAil1
+
+
+PORT      STATE SERVICE
+31046/tcp open  unknown
+31518/tcp open  unknown
+| ssl-cert: Subject: commonName=localhost
+| Subject Alternative Name: DNS:localhost
+| Issuer: commonName=localhost
+| Public Key type: rsa
+| Public Key bits: 2048
+| Signature Algorithm: sha1WithRSAEncryption
+| Not valid before: 2023-11-18T19:20:27
+| Not valid after:  2023-11-18T19:21:27
+| MD5:   91eb 1527 c25a 8bb7 7caf 10e1 21d9 3c6b
+|_SHA-1: 53fc 2591 281c a0a8 6078 e934 7a3e 45af eed2 4e9d
+31691/tcp open  unknown
+31790/tcp open  unknown
+| ssl-cert: Subject: commonName=localhost
+| Subject Alternative Name: DNS:localhost
+| Issuer: commonName=localhost
+| Public Key type: rsa
+| Public Key bits: 2048
+| Signature Algorithm: sha1WithRSAEncryption
+| Not valid before: 2023-11-18T19:20:27
+| Not valid after:  2023-11-18T19:21:27
+| MD5:   0de8 0eb4 489b 3e44 072b 0f79 87aa 3507
+|_SHA-1: ca00 fa0f d86a bafe a353 cf46 44f4 63cd d25a 2769
+31960/tcp open  unknown
+Correct: 31790
+Correct!
+-----BEGIN RSA PRIVATE KEY-----
+MIIEogIBAAKCAQEAvmOkuifmMg6HL2YPIOjon6iWfbp7c3jx34YkYWqUH57SUdyJ
+imZzeyGC0gtZPGujUSxiJSWI/oTqexh+cAMTSMlOJf7+BrJObArnxd9Y7YT2bRPQ
+Ja6Lzb558YW3FZl87ORiO+rW4LCDCNd2lUvLE/GL2GWyuKN0K5iCd5TbtJzEkQTu
+DSt2mcNn4rhAL+JFr56o4T6z8WWAW18BR6yGrMq7Q/kALHYW3OekePQAzL0VUYbW
+JGTi65CxbCnzc/w4+mqQyvmzpWtMAzJTzAzQxNbkR2MBGySxDLrjg0LWN6sK7wNX
+x0YVztz/zbIkPjfkU1jHS+9EbVNj+D1XFOJuaQIDAQABAoIBABagpxpM1aoLWfvD
+KHcj10nqcoBc4oE11aFYQwik7xfW+24pRNuDE6SFthOar69jp5RlLwD1NhPx3iBl
+J9nOM8OJ0VToum43UOS8YxF8WwhXriYGnc1sskbwpXOUDc9uX4+UESzH22P29ovd
+d8WErY0gPxun8pbJLmxkAtWNhpMvfe0050vk9TL5wqbu9AlbssgTcCXkMQnPw9nC
+YNN6DDP2lbcBrvgT9YCNL6C+ZKufD52yOQ9qOkwFTEQpjtF4uNtJom+asvlpmS8A
+vLY9r60wYSvmZhNqBUrj7lyCtXMIu1kkd4w7F77k+DjHoAXyxcUp1DGL51sOmama
++TOWWgECgYEA8JtPxP0GRJ+IQkX262jM3dEIkza8ky5moIwUqYdsx0NxHgRRhORT
+8c8hAuRBb2G82so8vUHk/fur85OEfc9TncnCY2crpoqsghifKLxrLgtT+qDpfZnx
+SatLdt8GfQ85yA7hnWWJ2MxF3NaeSDm75Lsm+tBbAiyc9P2jGRNtMSkCgYEAypHd
+HCctNi/FwjulhttFx/rHYKhLidZDFYeiE/v45bN4yFm8x7R/b0iE7KaszX+Exdvt
+SghaTdcG0Knyw1bpJVyusavPzpaJMjdJ6tcFhVAbAjm7enCIvGCSx+X3l5SiWg0A
+R57hJglezIiVjv3aGwHwvlZvtszK6zV6oXFAu0ECgYAbjo46T4hyP5tJi93V5HDi
+Ttiek7xRVxUl+iU7rWkGAXFpMLFteQEsRr7PJ/lemmEY5eTDAFMLy9FL2m9oQWCg
+R8VdwSk8r9FGLS+9aKcV5PI/WEKlwgXinB3OhYimtiG2Cg5JCqIZFHxD6MjEGOiu
+L8ktHMPvodBwNsSBULpG0QKBgBAplTfC1HOnWiMGOU3KPwYWt0O6CdTkmJOmL8Ni
+blh9elyZ9FsGxsgtRBXRsqXuz7wtsQAgLHxbdLq/ZJQ7YfzOKU4ZxEnabvXnvWkU
+YOdjHdSOoKvDQNWu6ucyLRAWFuISeXw9a/9p7ftpxm0TSgyvmfLF2MIAEwyzRqaM
+77pBAoGAMmjmIJdjp+Ez8duyn3ieo36yrttF5NSsJLAbxFpdlc1gvtGCWW+9Cq0b
+dxviW8+TFVEBl1O4f7HVm6EpTscdDxU+bCXWkfjuRb7Dy9GOtt9JPsX8MBTakzh3
+vBgsyi/sN3RqRBcGU40fOoZyfAMT8s1m/uYv52O6IgeuZ/ujbjY=
+-----END RSA PRIVATE KEY-----
+
+18: hga5tuuCLF6fFzUpnagiMN8ssu9LFrdg
+
+santiak@santiak-Lenovo-V14-IWL:~$ ssh -t bandit.labs.overthewire.org -p 2220 -l bandit18 cat readme
+                         _                     _ _ _   
+                        | |__   __ _ _ __   __| (_) |_ 
+                        | '_ \ / _` | '_ \ / _` | | __|
+                        | |_) | (_| | | | | (_| | | |_ 
+                        |_.__/ \__,_|_| |_|\__,_|_|\__|
+                                                       
+
+                      This is an OverTheWire game server. 
+            More information on http://www.overthewire.org/wargames
+
+bandit18@bandit.labs.overthewire.org's password: 
+awhqfNnAbc1naukrpqDYcF95h7HoMTrC
+
+
