@@ -1,0 +1,8 @@
+
+
+    cd ~/.node-red
+    ls
+    cd node_modules
+    git clone https://github.com/brocaar/node-red-contrib-chirpstack.git
+    npm i node-red-contrib-chirpstack
+    node-red restart

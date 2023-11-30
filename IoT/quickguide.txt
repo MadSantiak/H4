@@ -1,0 +1,28 @@
+Inden sidste trin i Sørens guide, gå til:
+ chirpstack.io/docs/chirpstaack-mqtt-forwarder/install/kerlink.html
+ 
+ Følg vejledningen der, dvs.:
+
+1. Installer Common Port-Forwarder:
+1.1.: klks_apps_config --activate-cpf
+
+1.2.: Gå derefter ind i filen:
+	/etc/lorafwd.toml
+ 	og verificer, at der under afsnittet [gwmp], er node variablen sat til den selv:
+	node=127.0.0.1
+1.3.: Genstart servicen: monit restart lorafwd
+ 
+2. Installer Chirpstack MQTT Forwarder:
+2.1.: Hent IPK og den installeres som i vejledningen.
+2.2.: I den resulterende fil:
+	/etc/chirpstack-mqtt-forwarder/chirpstack-mqtt-forwarder.toml
+	Skal man sikre sig, at:
+	server="tcp://ip.på.din.raspberry:1883"
+
+3. Installer Chirpstack Gateway Bridge
+3.1.: Følg guiden på
+	chirpstack.io/docs/chirpstack-gateway-bridge/install/kerlink.html
+	Det eneste der skal iskres, er at i:
+	[backend]
+	står der
+	udp_bind = "0.0.0.0:1700"

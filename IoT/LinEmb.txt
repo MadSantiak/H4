@@ -1,0 +1,895 @@
+Oversigt over faget "IoT og Embedded Linux":
+
+Konklusion så den ikke hamres ned i bund:
+Synes det var et fint om end (forståeligt nok) lidt løst formuleret, hvilket jeg personligt
+ikke føler er et negativ.
+Men af samme grund er det også lidt svært at give noget meningsfuld feedback i hvordan det kunne gøres anderledes, da meget af det der blev gjort, var - følte jeg - mig selv der fandt på.
+Så en fin øvelse i selvstændighed, men til tider var dokumentationen (specielt for The Things Uno!) 
+så mangelfuld at det var udfordrende.
+
+#### Opsat: ####
+1 End Device (The Things Uno)
+2 Gateway (Kerlink)
+3 Server (Chirpstack, docker på Raspberry Pi)
+4 Dashboard (NodeRED, docker på Raspberry Pi)
+Bemærk at grundet manglende materiale/info, havde jeg i første omgang
+installeret NodeRED lokalt, men takket være eksport/import af flow'et var dette ikke noget problem.
+Og ingen videre udfordring.
+################
+
+
+#### 1. The Things Uno:
+- Primært fokus har her være på at via Arduino IDE generer "dummmy" data som så kunne sendes igennem Gateway til Server og til sidst visualiseres på Dashboard.
+
+Eksempel på dette:
+function decodeUplink(input) {
+  var data = {};
+  var bytes = input.bytes;
+  var temperature = (bytes[0] << 8 | bytes[1]);
+
+  data.temp = temperature / 100.0
+  data.waterConsumption = bytes[2];
+  data.flowRate = bytes[3];
+  data.tampering = (bytes[4] === 1);
+  data.battery = bytes[5];
+
+  return {
+    data: data,
+  };
+}
+
+Bemærk at "temperature" er hentet via OneWire.
+Det var ikke umiddelbart til at finde frem til nogen som helst nyttig dokumentation til The Things Uno, og ligeledes var det også sparsomt med dens urudspring Arduino Leonardo; den virker meget bare-bone.
+
+#### 2. Gateway:
+- Stort set kun sluttet denne til og anvendt de nødvendige data (EUI) til at koble den på min Server.
+
+#### 3. Server:
+- Chirpstack installeret via docker container på Raspberry Pi.
+- Oprettet Applikation og deri tilføjet End Device.
+- Opsat Gateway.
+
+#### 4. Dashboard:
+- NodeRED installeret via docker container på Raspberry Pi.
+- Installeret Chirpstack-specifikke nodes + Dashboard nodes. 
+! Problematik med at få førstnævnte til at slå igennem løst ved at hente repo direkte ned i 	node_modules og køre npm i [sti] på dem.
+- Har fra lavet primær nodes (mqtt in, functions, change, ui_chart, debug) for at kunne modtage info fra End Device via Chirpstack.
+- Derfra separeret værdier ud og lagt dem ind i hver sin linjegraf og/eller gauge.
+- Også samlet disse via funktion med X outputs til samme linjegraf og/eller pie-chart.
+Eksempel på kode anvendt til dette:
+
+var payloads = [];
+
+for (var item in msg.payload.object) {
+    payloads.push({
+        payload: msg.payload.object[item],
+        topic: item
+    });
+}
+
+return payloads;
+
+BEMÆRK: Forsøgt at sende MQTT tilbage til Chirpstack for at kunne reagere på f.eks. "tampering".
+Dog kunne jeg kun via Chirpstack få sendt et downlink, men forsøg på at afkode indholdet var drilsk.
+Forsøgte at bruge almene "mqtt out" nodes, men også disse fejlede, trods brug af default topic stier, samt generiske stier udformet via data indhentet fra mqtt in (msg.payload.app_id, etc.)
+
+###############################################
+######### Der var visse problemer med:
+###############################################
+>> 1. Få NodeRED til at svare tilbage til Chirpstack på en meningsfuld måde.
+1.1. Specifikt var det besværligt at få vedlagt data til den forberede downlink:
+return {
+    devEui: msg.payload.deviceInfo.devEui,
+    fPort: msg.payload.fPort,
+    confirmed: false,
+    payload: msg.payload.data,
+    object: msg.payload.object
+};
+OG
+1.2. Besværligt at gennemskue hvordan The Things Uno specifikt skulle reagere på dette. Forsøg på at omstrukturere (de/en)codeDownlink() til at håndtere dem førte til at Chirpstack pludselig ikke ville acceptere/reagere på modtagne data fra end devicet.
+1.2.1. Bemærk at ovenstående nok blev "forværrert" ved, at indtrykket af at evaluering ville ske snart, og uden reelle mål for hvad/hvordan vi skulle bedømmes, følte jeg det var for stort et risici at potentielt smadre koblingen på dagen vi havde hørt vi ville blive bedømt.
+-------
+>> 2. Få installeret chirpstack specifikke nodes.
+2.1. Den officielle dokumentation var noget vag og så ud til forudsætte nøjagtig samme opsætning som forfatteren, hvorfor den var ikke-anvendelig for den opsætning jeg havde fået skruet sammen.
+Problemet var imidlertid både at finde da jeg i første omgang kørte NodeRED lokalt på min arbejdscomputer, men også senere da jeg kørte den i en docker container på Raspberry Pi'en.
+
+###############################################
+######### Der var visse udfordringer med:
+###############################################
+>> 1. Ideen bag NodeRED "topic" parametren; hvordan man fandt frem til den, hvad der gav mening, osv.
+1.1. Løsningen med multiple-wildcard som udgangspunkt (#) så jeg ved medstuderende, medførte problemer senere, i forsøg på at parse data.
+1.2. Det jeg følte gav bedst mening, og som kunne findes i officiel dokumentation, var:
+application/+/device/+/event/+
+Dvs. en topic der pegede på en bestemt applikation (med enkelt wildcard i stedet for specifik applikations UUID), og device (igen, med + i stedet for specific DevEUI), og et givent event.
+Dette forhindrede også, at jeg ikke fik "ekko" under forsøg på at sende command/down tilbage til End Devicet.
+
+#####
+#####
+#####
+#####  Efterfølgende er JSON eksport af NodeRED struktur:
+#####
+#####
+#####
+
+[
+    {
+        "id": "24919e2c6e1c8292",
+        "type": "mqtt in",
+        "z": "868f7a4267c27181",
+        "name": "Masopi",
+        "topic": "application/+/device/+/event/up",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "ffeeb05c1b828cd3",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 250,
+        "y": 220,
+        "wires": [
+            [
+                "4ea989f4e8f91d57",
+                "65de8e0268d92aaf",
+                "da930822e7b23555",
+                "2fdac3ddfe103084",
+                "eb597b7112f8b449",
+                "2556771e837b58f6",
+                "0b57578a9445b831"
+            ]
+        ]
+    },
+    {
+        "id": "4ea989f4e8f91d57",
+        "type": "change",
+        "z": "868f7a4267c27181",
+        "name": "Water Consumption",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.object.waterConsumption",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 470,
+        "y": 440,
+        "wires": [
+            [
+                "f3543969937c691d",
+                "f3f33fd3997b5f3d"
+            ]
+        ]
+    },
+    {
+        "id": "65de8e0268d92aaf",
+        "type": "change",
+        "z": "868f7a4267c27181",
+        "name": "Flow Rate",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.object.flowRate",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 440,
+        "y": 480,
+        "wires": [
+            [
+                "39b942735e1ceb2c",
+                "db4f81ab6f9465d7"
+            ]
+        ]
+    },
+    {
+        "id": "da930822e7b23555",
+        "type": "change",
+        "z": "868f7a4267c27181",
+        "name": "Temperature",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.object.temp",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 450,
+        "y": 560,
+        "wires": [
+            [
+                "239df3896381fecc"
+            ]
+        ]
+    },
+    {
+        "id": "2fdac3ddfe103084",
+        "type": "change",
+        "z": "868f7a4267c27181",
+        "name": "Tampering",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.object.tampering",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 450,
+        "y": 600,
+        "wires": [
+            [
+                "4253ea172dfd84de"
+            ]
+        ]
+    },
+    {
+        "id": "eb597b7112f8b449",
+        "type": "change",
+        "z": "868f7a4267c27181",
+        "name": "Battery",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.object.battery",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 440,
+        "y": 640,
+        "wires": [
+            [
+                "48b2f007a177d505"
+            ]
+        ]
+    },
+    {
+        "id": "f3543969937c691d",
+        "type": "ui_chart",
+        "z": "868f7a4267c27181",
+        "name": "",
+        "group": "3330951f3cbff6c4",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "Water Consumption",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 730,
+        "y": 440,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "39b942735e1ceb2c",
+        "type": "ui_chart",
+        "z": "868f7a4267c27181",
+        "name": "",
+        "group": "3330951f3cbff6c4",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "Flow Rate",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 700,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "239df3896381fecc",
+        "type": "ui_chart",
+        "z": "868f7a4267c27181",
+        "name": "",
+        "group": "3330951f3cbff6c4",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "Temperature",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 710,
+        "y": 560,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "48b2f007a177d505",
+        "type": "ui_chart",
+        "z": "868f7a4267c27181",
+        "name": "",
+        "group": "2a9bb9afb4c90b5a",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "Battery",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 700,
+        "y": 640,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "727186e4110c7844",
+        "type": "ui_text",
+        "z": "868f7a4267c27181",
+        "group": "2a9bb9afb4c90b5a",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Tampering",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 990,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "4253ea172dfd84de",
+        "type": "function",
+        "z": "868f7a4267c27181",
+        "name": "Convert state to text",
+        "func": "msg.payload = (msg.payload == 0) ? \"No\" : \"Yes\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 600,
+        "wires": [
+            [
+                "727186e4110c7844"
+            ]
+        ]
+    },
+    {
+        "id": "2556771e837b58f6",
+        "type": "device event",
+        "z": "868f7a4267c27181",
+        "name": "Masopi (Chirpstack server)",
+        "eventType": "up",
+        "x": 510,
+        "y": 160,
+        "wires": [
+            [
+                "5e6939c1e1318746",
+                "cbf2b2ac233dec69",
+                "c80a63fc90fa0b1c"
+            ]
+        ]
+    },
+    {
+        "id": "cbf2b2ac233dec69",
+        "type": "debug",
+        "z": "868f7a4267c27181",
+        "name": "Uplink Data",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 550,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "5e6939c1e1318746",
+        "type": "function",
+        "z": "868f7a4267c27181",
+        "d": true,
+        "name": "Prepare downlink msg",
+        "func": "return {\n    devEui: msg.payload.deviceInfo.devEui,\n    fPort: msg.payload.fPort,\n    confirmed: false,\n    payload: msg.payload.data,\n    object: msg.payload.object\n};\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 810,
+        "y": 160,
+        "wires": [
+            [
+                "b9139b239acc2b05"
+            ]
+        ]
+    },
+    {
+        "id": "b9139b239acc2b05",
+        "type": "device downlink",
+        "z": "868f7a4267c27181",
+        "name": "Downlink",
+        "server": "192.168.0.167:8080",
+        "useTls": false,
+        "apiToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6ImU4MmE0MzFmLTJlNjctNGNhYS1hMDhkLTZhMTliNWU5ZDE2ZiIsInR5cCI6ImtleSJ9.bZQ-ECh1_LJKBEG0c-InAPcdGrp3ptnWzWEqK97AaYc",
+        "encoding": "base64",
+        "x": 1100,
+        "y": 160,
+        "wires": [
+            [
+                "ea892b32db471dd4"
+            ]
+        ]
+    },
+    {
+        "id": "ea892b32db471dd4",
+        "type": "debug",
+        "z": "868f7a4267c27181",
+        "name": "Downlink Data",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1120,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "f3f33fd3997b5f3d",
+        "type": "ui_gauge",
+        "z": "868f7a4267c27181",
+        "name": "",
+        "group": "6386ad8f787f3fc1",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Water Consumption",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "256",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 730,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "db4f81ab6f9465d7",
+        "type": "ui_gauge",
+        "z": "868f7a4267c27181",
+        "name": "",
+        "group": "6386ad8f787f3fc1",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Flow Rate",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "256",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 700,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "7fff1806d11e8dc8",
+        "type": "ui_chart",
+        "z": "868f7a4267c27181",
+        "name": "Multi (lines)",
+        "group": "1a0152d2b0f6c801",
+        "order": 0,
+        "width": "0",
+        "height": "0",
+        "label": "All (lines)",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 710,
+        "y": 320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d5c01bcd819eeb33",
+        "type": "ui_chart",
+        "z": "868f7a4267c27181",
+        "name": "Multi (pie)",
+        "group": "1a0152d2b0f6c801",
+        "order": 0,
+        "width": "6",
+        "height": "5",
+        "label": "All (pie)",
+        "chartType": "pie",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 700,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0b57578a9445b831",
+        "type": "function",
+        "z": "868f7a4267c27181",
+        "name": "Get all",
+        "func": "\nvar payloads = [];\n\nfor (var item in msg.payload.object) {\n    payloads.push({\n        payload: msg.payload.object[item],\n        topic: item\n    });\n}\n\nreturn payloads;\n",
+        "outputs": 5,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\nnode.outputCount = 8;",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 340,
+        "wires": [
+            [
+                "7fff1806d11e8dc8",
+                "d5c01bcd819eeb33"
+            ],
+            [
+                "7fff1806d11e8dc8",
+                "d5c01bcd819eeb33"
+            ],
+            [
+                "7fff1806d11e8dc8",
+                "d5c01bcd819eeb33"
+            ],
+            [
+                "7fff1806d11e8dc8",
+                "d5c01bcd819eeb33"
+            ],
+            [
+                "7fff1806d11e8dc8",
+                "d5c01bcd819eeb33"
+            ]
+        ]
+    },
+    {
+        "id": "c80a63fc90fa0b1c",
+        "type": "function",
+        "z": "868f7a4267c27181",
+        "name": "function 1",
+        "func": "const appId = msg.payload.app_id;\nconst devId = msg.payload.dev_id;\n\nconst tampered = msg.payload.object.tampering;\nconst bytes = [tampered];\n\nmsg.topic = `application/${appId}/device/${devId}/command/down`;\n\nmsg.payload = {\n  dev_id: devId,\n  port: 1,\n  confirmed: false,\n  schedule: 'replace',\n  payload_raw: Buffer.from(bytes).toString('base64')\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 760,
+        "y": 200,
+        "wires": [
+            [
+                "dc57a5e2bccf0999",
+                "4c7a5cca83d8ca88"
+            ]
+        ]
+    },
+    {
+        "id": "4c7a5cca83d8ca88",
+        "type": "mqtt out",
+        "z": "868f7a4267c27181",
+        "name": "",
+        "topic": "",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "ffeeb05c1b828cd3",
+        "x": 1090,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "ffeeb05c1b828cd3",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "192.168.0.167",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "3330951f3cbff6c4",
+        "type": "ui_group",
+        "name": "Data",
+        "tab": "f587a65e376b6fed",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "2a9bb9afb4c90b5a",
+        "type": "ui_group",
+        "name": "System Info",
+        "tab": "f587a65e376b6fed",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "6386ad8f787f3fc1",
+        "type": "ui_group",
+        "name": "Gauge",
+        "tab": "f587a65e376b6fed",
+        "order": 3,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "1a0152d2b0f6c801",
+        "type": "ui_group",
+        "name": "Multi",
+        "tab": "4c46b8e4606ea67d",
+        "order": 4,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "f587a65e376b6fed",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "4c46b8e4606ea67d",
+        "type": "ui_tab",
+        "name": "Overview",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
