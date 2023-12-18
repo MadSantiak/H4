@@ -1,0 +1,41 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\Santi\\source\\repos\\CodeAlongExerciseApp\\CodeAlongExerciseApp\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\CodeAlongExerciseApp.bundle.scp.css",
+      "PackagePath": "staticwebassets\\CodeAlongExerciseApp.bundle.scp.css"
+    },
+    {
+      "Id": "C:\\Users\\Santi\\source\\repos\\CodeAlongExerciseApp\\CodeAlongExerciseApp\\wwwroot\\app.css",
+      "PackagePath": "staticwebassets\\app.css"
+    },
+    {
+      "Id": "C:\\Users\\Santi\\source\\repos\\CodeAlongExerciseApp\\CodeAlongExerciseApp\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "C:\\Users\\Santi\\source\\repos\\CodeAlongExerciseApp\\CodeAlongExerciseApp\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\Santi\\source\\repos\\CodeAlongExerciseApp\\CodeAlongExerciseApp\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.CodeAlongExerciseApp.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.CodeAlongExerciseApp.props",
+      "PackagePath": "build\\CodeAlongExerciseApp.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.CodeAlongExerciseApp.props",
+      "PackagePath": "buildMultiTargeting\\CodeAlongExerciseApp.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.CodeAlongExerciseApp.props",
+      "PackagePath": "buildTransitive\\CodeAlongExerciseApp.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

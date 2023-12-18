@@ -1,0 +1,9 @@
+﻿@page "/page2" 
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Policy = "AuthenticatedUser")]
+@* @attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AuthenticatedUser")] *@
+<h3>Page2</h3>
+
+@code {
+
+}
