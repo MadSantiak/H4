@@ -1,0 +1,19 @@
+Ved opsætning af Node-RED til at fungere med Chirpstack, kan der være udfordringer ift. at få det til at virke med de Chirpstack specifikke nodes, nævnt i guiden på chirpstack.io.
+
+For en lokal instans, kan man forsøge at installere dem direkte i den korrekte mappe:
+
+    cd ~/.node-red
+    cd node_modules
+    git clone https://github.com/brocaar/node-red-contrib-chirpstack.git
+    npm i node-red-contrib-chirpstack
+    node-red restart
+
+
+For en docker instans, kan man gå ind i bash'en på containeren, og lave samme nummer:
+
+    sudo docker exec -it [container_id] bash
+    cd node_modules
+    git clone https://github.com/brocaar/node-red-contrib-chirpstack.git
+    npm i node-red-contrib-chirpstack/
+
+Og genstart containeren efterfølgende.
