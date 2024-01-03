@@ -1,0 +1,16 @@
+﻿@page "/page4"
+@using Microsoft.AspNetCore.Authorization
+@* @attribute [Authorize(Roles = "Admin")] *@
+
+<h3>Page4</h3>
+<AuthorizeView Roles="Admin">
+    <Authorized>
+        You're admin!
+    </Authorized>
+    <NotAuthorized>
+        You're not admin!
+    </NotAuthorized>
+</AuthorizeView>
+@code {
+
+}

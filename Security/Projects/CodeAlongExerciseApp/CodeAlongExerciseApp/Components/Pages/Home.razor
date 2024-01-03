@@ -1,0 +1,45 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Authorization;
+@inject IServiceProvider serviceProvider;
+@inject UserManager<Data.ApplicationUser> userManager;
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<br/>
+<a href="/page2">=> Page 2 (Authenticated users)</a>
+<br/>
+<a href="/page3">=> Page 3 (Save file)</a>
+<br />
+<AuthorizeView Roles="Admin">
+    <Authorized>
+        <a href="/page4">=> Page 4 (Authorized user(s); Admin)</a>
+    </Authorized>
+</AuthorizeView>
+
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        base.OnInitialized();
+
+        // await CreateUserRoles("test@test.dk", "Admin");
+
+    }
+    public async Task CreateUserRoles(string user, string role)
+    {
+        var roleMng = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+        var userRoleCheck = await roleMng.RoleExistsAsync(role);
+        if (!userRoleCheck)
+        {
+            await roleMng.CreateAsync(new Microsoft.AspNetCore.Identity.IdentityRole(role));
+        }
+
+        Data.ApplicationUser identUser = await userManager.FindByEmailAsync(user);
+        await userManager.AddToRoleAsync(identUser, role);
+    }
+}

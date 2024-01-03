@@ -1,0 +1,19 @@
+﻿@page "/page2" 
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Policy = "AuthenticatedUser")]
+@inject AuthenticationStateProvider _authenticatedStateProvider;
+
+<h3>Page2</h3>
+
+@code {
+    public bool isAuthenticated { get; set; }
+    public bool isAuthorized { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await _authenticatedStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        isAuthenticated = user.Identity.IsAuthenticated;
+        isAuthorized = user.IsInRole("Admin");
+    }
+}
