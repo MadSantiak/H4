@@ -32,12 +32,12 @@
             string userDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
             // Append to file.
-            string filePath = Path.Combine(userDirectory, "sample.txt");
+            string filePath = Path.Combine(userDirectory, "access_log.txt");
             await System.IO.File.AppendAllTextAsync(filePath, contentWithTimestamp);
 
             // Save copy with appended name serverside:
             string rootPath = System.IO.Directory.GetCurrentDirectory();
-            string serverPath = Path.Combine(rootPath, "wwwroot", "sample.txt");
+            string serverPath = Path.Combine(rootPath, "wwwroot", "access_log.txt");
             await System.IO.File.AppendAllTextAsync(serverPath, contentWithTimestamp);
         }
         catch (Exception ex)
