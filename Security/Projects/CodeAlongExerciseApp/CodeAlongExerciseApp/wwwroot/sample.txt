@@ -1,1 +1,4 @@
-This is a sample text file content.Unknown usertest@test.dk
+This is a sample text file content.Unknown usertest@test.dk2024-01-03 11:16:25 - test@test.dk
+2024-01-03 11:16:36 - test@test.dk
+2024-01-03 11:16:42 - test@test.dk
+2024-01-03 11:17:14 - Unknown user
