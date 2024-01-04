@@ -5,6 +5,10 @@
       "PackagePath": "staticwebassets\\CodeAlongExerciseApp.bundle.scp.css"
     },
     {
+      "Id": "C:\\Users\\Santi\\source\\repos\\CodeAlongExerciseApp\\CodeAlongExerciseApp\\wwwroot\\access_log.txt",
+      "PackagePath": "staticwebassets\\access_log.txt"
+    },
+    {
       "Id": "C:\\Users\\Santi\\source\\repos\\CodeAlongExerciseApp\\CodeAlongExerciseApp\\wwwroot\\app.css",
       "PackagePath": "staticwebassets\\app.css"
     },

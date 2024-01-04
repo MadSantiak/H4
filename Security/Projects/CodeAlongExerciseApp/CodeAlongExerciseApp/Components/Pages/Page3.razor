@@ -8,6 +8,9 @@
     <Authorized>
         <div>
             You were AUTHORIZED
+            <div>
+                <textarea rows="25" cols="50" @bind="@fileContent"></textarea>
+            </div>
         </div>
     </Authorized>
     <NotAuthorized>
@@ -18,13 +21,21 @@
 </AuthorizeView>
 
 @code {
+    private bool isAdmin = false;
+    private string fileContent = "";
+
     protected override async Task OnInitializedAsync()
     {
+
+        var authState = await _authenticatedStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var username = authState.User.Identity.Name;
+        isAdmin = user.IsInRole("Admin");
+
         try
         {
             // Get current user
-            var authState = await _authenticatedStateProvider.GetAuthenticationStateAsync();
-            var username = authState.User.Identity.Name;
+
             username = username != null ? username : "Unknown user";
             string contentWithTimestamp = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - {username}\n";
 
@@ -38,10 +49,26 @@
             // Save copy with appended name serverside:
             string rootPath = System.IO.Directory.GetCurrentDirectory();
             string serverPath = Path.Combine(rootPath, "wwwroot", "access_log.txt");
-            await System.IO.File.AppendAllTextAsync(serverPath, contentWithTimestamp);
+            System.IO.File.AppendAllText(serverPath, contentWithTimestamp);
         }
         catch (Exception ex)
         {
+        }
+
+
+        if (isAdmin)
+        {
+            string rootPath = System.IO.Directory.GetCurrentDirectory();
+            string serverPath = Path.Combine(rootPath, "wwwroot", "access_log.txt");
+
+            if (System.IO.File.Exists(serverPath))
+            {
+                fileContent = System.IO.File.ReadAllText(serverPath);
+            }
+            else
+            {
+                fileContent = "File not found or access denied.";
+            }
         }
     }
 }

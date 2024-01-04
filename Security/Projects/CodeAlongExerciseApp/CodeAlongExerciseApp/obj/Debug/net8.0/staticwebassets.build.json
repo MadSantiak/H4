@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "dGNrayNf+ftfrdDVcnOyr1OCOoVUipxQztJt2UxfZUc=",
+  "Hash": "/+LKsBAlJuAQ3jPNO7PNfN5S+9DQ9m6RQGMTPvyxg8k=",
   "Source": "CodeAlongExerciseApp",
   "BasePath": "_content/CodeAlongExerciseApp",
   "Mode": "Default",
@@ -53,6 +53,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\Users\\Santi\\source\\repos\\CodeAlongExerciseApp\\CodeAlongExerciseApp\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\CodeAlongExerciseApp.bundle.scp.css"
+    },
+    {
+      "Identity": "C:\\Users\\Santi\\source\\repos\\CodeAlongExerciseApp\\CodeAlongExerciseApp\\wwwroot\\access_log.txt",
+      "SourceId": "CodeAlongExerciseApp",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Santi\\source\\repos\\CodeAlongExerciseApp\\CodeAlongExerciseApp\\wwwroot\\",
+      "BasePath": "_content/CodeAlongExerciseApp",
+      "RelativePath": "access_log.txt",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\access_log.txt"
     },
     {
       "Identity": "C:\\Users\\Santi\\source\\repos\\CodeAlongExerciseApp\\CodeAlongExerciseApp\\wwwroot\\app.css",

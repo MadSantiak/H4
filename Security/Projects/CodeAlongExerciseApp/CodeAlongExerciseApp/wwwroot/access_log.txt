@@ -1,1 +1,10 @@
 2024-01-03 11:43:49 - test@test.dk
+2024-01-03 12:27:11 - test@test.dk
+2024-01-03 12:27:18 - test@test.dk
+2024-01-03 12:27:56 - test@test.dk
+2024-01-03 12:27:57 - test@test.dk
+2024-01-03 12:28:06 - test@test.dk
+2024-01-03 12:28:07 - test@test.dk
+2024-01-04 13:45:51 - Unknown user
+2024-01-04 13:46:29 - test@test.dk
+2024-01-04 14:45:09 - test@test.dk

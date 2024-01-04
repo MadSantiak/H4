@@ -58,7 +58,10 @@ namespace CodeAlongExerciseAppTest
             // Assert
             cut.MarkupMatches(@"<h3>Page3</h3><div>
             You were AUTHORIZED
-        </div>");
+                <div>
+                    <textarea rows=""25"" cols=""50"" value="""" ></textarea>
+                </div>
+            </div>");
         }
 
         [Fact]
