@@ -10,4 +10,6 @@ public partial class TodoItem
     public string User { get; set; } = null!;
 
     public string Name { get; set; } = null!;
+
+    public string? Status { get; set; }
 }

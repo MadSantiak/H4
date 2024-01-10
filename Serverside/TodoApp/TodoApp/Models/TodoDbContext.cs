@@ -29,9 +29,8 @@ public partial class TodoDbContext : DbContext
         {
             entity.ToTable("Cpr");
 
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnName("id");
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Address).HasColumnName("address");
             entity.Property(e => e.Cpr1).HasColumnName("cpr");
             entity.Property(e => e.CprEnding)
                 .HasMaxLength(4)
@@ -47,6 +46,7 @@ public partial class TodoDbContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.Status).HasColumnName("status");
             entity.Property(e => e.User).HasColumnName("user");
         });
 

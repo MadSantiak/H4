@@ -137,3 +137,4 @@ C:\Users\Santi\Desktop\Skole\h4\Serverside\TodoApp\TodoApp\obj\Debug\net8.0\Todo
 C:\Users\Santi\Desktop\Skole\h4\Serverside\TodoApp\TodoApp\obj\Debug\net8.0\TodoApp.genruntimeconfig.cache
 C:\Users\Santi\Desktop\Skole\h4\Serverside\TodoApp\TodoApp\obj\Debug\net8.0\ref\TodoApp.dll
 C:\Users\Santi\Desktop\Skole\h4\Serverside\TodoApp\TodoApp\bin\Debug\net8.0\BCrypt.Net-Next.dll
+C:\Users\Santi\Desktop\Skole\h4\Serverside\TodoApp\TodoApp\bin\Debug\net8.0\79a3edd0-2092-40aZ-a94d-dcb46d5ca9ed\secrets.json

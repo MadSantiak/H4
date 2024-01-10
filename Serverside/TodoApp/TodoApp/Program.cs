@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Authentication;
+using TodoApp.Code;
 using TodoApp.Components;
 using TodoApp.Components.Account;
 using TodoApp.Data;
@@ -17,6 +18,7 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+builder.Services.AddSingleton<EncryptionHandler>();
 
 builder.Services.AddAuthentication(options =>
     {
@@ -61,6 +63,11 @@ builder.WebHost.UseKestrel((context, serverOptions) =>
     });
 });
 
+builder.Services.AddDataProtection();
+
+string kestrelPass = builder.Configuration.GetValue<string>("KestrelPassword");
+builder.Configuration.GetSection("Kestrel:endpoints:Https:Certificate:password").Value = kestrelPass;
+// Added the folder to the solution for ease.
 var app = builder.Build();
 
 ////////////////////////////////////////////

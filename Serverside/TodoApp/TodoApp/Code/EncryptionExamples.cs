@@ -3,10 +3,13 @@ using System.Security.Cryptography;
 using System.Text;
 using System.IO;
 using System.Linq;
+using Microsoft.AspNetCore.DataProtection;
+
 namespace TodoApp.Code;
 
 public class EncryptionExamples
 {
+    
     // Methods for d/encrypting plaintext to and from ciphertext, using the rotated username as key.
     // NOTE: Due to limitations, the rotated username may not always be a valid key, hence the GetValidKey helper function.
     /// <summary>
@@ -73,10 +76,10 @@ public class EncryptionExamples
         {
             // In case of decryption error (e.g., incorrect key or padding issues),
             // return the original encrypted text instead of throwing an exception.
-            return cipherText;
+            return "*OBFUSCATED*";
         }
     }
-
+    
     /// <summary>
     /// Helper method that helps convert a non-applicable key(size) to one acceptable by AES.
     /// </summary>

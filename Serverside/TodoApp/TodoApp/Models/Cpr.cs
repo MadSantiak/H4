@@ -12,4 +12,6 @@ public partial class Cpr
     public string CprEnding { get; set; } = null!;
 
     public string User { get; set; } = null!;
+
+    public string? Address { get; set; }
 }

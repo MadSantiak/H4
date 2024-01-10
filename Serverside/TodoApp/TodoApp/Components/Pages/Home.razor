@@ -1,4 +1,52 @@
-﻿@page "/"
+﻿@*
+The idea behind the project is a ToDo-web server app that allows a single account
+to track and maintain a number of different Todo-items, assigned to a number of different sub-users.
+I.e. a "family account" where family member 1, 2 and 3, can each have their own ToDo items, where:
+- Name is only viewable by the member in question (due to cryptographically salted encryption)
+- Status is viewable by all members
+- One user (test@test.dk) can thus have ToDo items for Member A, B and C
+- But only when the CPR for Member A is applied, will ToDo items deobfuscate. ToDo items for B and C will remain obfuscated.
+
+    Example of Encryptions:
+        - Symmetrical:
+            - Todo Name (custom)
+            - Todo Status (Protector)
+        - Asymmetrical:
+            - CPR Address
+    
+    Example of Hashing:
+        - CPR Number
+
+    Environment Security:
+        - DataProtection library Public and Private key are granted permanency via storage in local files ("private_key.xml", "public_key.xml").
+
+    Todo Name:
+    The "name" is salted prior to AES encryption, using a key generated cryptographically via:
+        Caesar Cipher:
+            Rotation: The last 4 digits of CPR number
+            Text: Username (e.g. "test@test.dk")
+            Bounded to AES compatible characters to avoid conflicts when encrypting.
+            => Username: "sdrs?sdrs-cj"
+    This is reversed during decryption
+    => thus obfuscating information if the last 4 digits of the CPR are incongruent.
+
+    Todo Status:
+    Uses the AspNetCore DataProtection library to encrypt symmetrically, decrypts directly in view.
+
+    CPR Address:
+    same as above, but asymmetrically; decrypted during Initialization.
+
+    CPR Number:
+    Hashed using Username + rotation cryptography by last 4 digits.
+    In addition, the uniqueness of CPR is verified by:
+        1. Searching Database for the last 4 digits
+        2. Applying caesar cipher on that entry's Username using the integer value of the 4 digits.
+        3. Applying the resulting rotated string as salt
+        4. Hashing the "new" CPR number with that salt
+        5. Comparing wether the result of hashing the new CPR number with the salt derived from the found entrys salt.
+    Note that on first hit, the loop exits, as we only need 1 match.
+*@
+@page "/"
 @using Microsoft.AspNetCore.Authorization;
 @using System.Security.Claims;
 @using System.Linq;
@@ -9,6 +57,7 @@
 @using TodoApp.Code;
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject Models.TodoDbContext _todoDbContext;
+@inject EncryptionHandler _encryptionHandler;
 @attribute [Authorize(Policy = "AuthenticatedUser")]
 
 <PageTitle>Home</PageTitle>
@@ -17,52 +66,83 @@
 
 <AuthorizeView>
     <Authorized>
-        @if (!hasCPR)
+        @if (!HasCPR)
         {
-            <label>Enter CPR:</label>
-            <input type="text" id="cprCreate" @bind="cprNumber" />
+            <div>
+                <label>Enter CPR:</label>
+                <input type="text" id="cprCreate" @bind="CprNumber" />
+            </div>
+            <div>
+                <label>Enter Address:</label>
+                <input type="text" id="addCreate" @bind="Address"/>
+            </div>
             <button @onclick="AddCPR">Submit</button>
-            <p hidden=@isFormatCorrect>CPR format is incorrect!</p>
+            <p hidden=@IsFormatCorrect>CPR format is incorrect!</p>
+            <p hidden=@IsUniqueCPR>CPR already in use!</p>
         }
         else
         {
             <div>
-                <p>Your CPR number is: </p><input type="text" id="cprEdit" @bind="cprNumber"/>
-                <button @onclick="DeleteCPRAsync">Delete</button>
+                <label>Your CPR number is:</label>
+                <p>@CprNumber</p>
+            </div>
+            <div>
+                <label>Your address is:</label>
+                <p>@Address</p>
+            </div>
+            <div>
+                <button @onclick="DeleteCPRAsync">Other Member</button>
             </div>
             <br/>
             <br/>
             <div>
                 <h4>Todo-List:</h4>
-                <ul>
-                    @foreach (var item in TodoItems)
-                    {
-                        <li>@DecryptItemName(@item.Name) <button @onclick="() => DeleteTodoAsync(item)">Delete</button></li>
-                    }
-                </ul>
+
+                @foreach (var item in TodoItems)
+                {
+                    <div class="row mb-3" style="margin:5px">
+                        <div class="col-md-2" style="background-color:lightgray;padding:5px">
+                            <span>@DecryptItemName(@item.Name)</span>
+                        </div>
+                        <div class="col-md-2" style="padding:5px">
+                            @if (item.Status != null) @_encryptionHandler.ProtectorDecrypt(@item.Status)
+                        </div>
+                        <div class="col-md-2" style="background-color:lightgray;padding:5px">
+                            <input type="text" @bind="Status" />
+                        </div>
+                        <div class="col-md-2" style="padding:5px">
+                            <button class="btn btn-info ml-2" @onclick="() => UpdateStatus(item)">Update Status</button>
+                        </div>
+                        <div class="col-md-2" style="background-color:lightgray;padding:5px">
+                            <button class="btn btn-danger ml-2" @onclick="() => DeleteTodoAsync(item)">Delete</button>
+                        </div>
+                    </div>
+                }
             </div>
             <div>
                 <label>Add Todo:</label>
-                <input type="text" id="todoCreate" @bind="todoDescription"/>
+                <input type="text" id="todoCreate" @bind="TodoName"/>
                 <button @onclick="AddTodoAsync">Add</button>
             </div>
         }
-        <p style="color:gray">@hashCPR</p>
+        <p style="color:gray">@HashCPR</p>
 
     </Authorized>
 </AuthorizeView>
 
 @code {
     public string? Username { get; set; }
-    public string? cprNumber { get; set; }
-    public string? hashCPR { get; set; }
-    public string? todoDescription { get; set; }
-
-    public bool hasCPR { get; set; }
-    public bool isFormatCorrect { get; set; } = true;
+    public string? CprNumber { get; set; }
+    public string? Address { get; set; }
+    public string? HashCPR { get; set; }
+    public string? TodoName { get; set; }
+    public string? Status { get; set; }
+    public bool HasCPR { get; set; }
+    public bool IsFormatCorrect { get; set; } = true;
+    public bool IsUniqueCPR { get; set; } = true;
 
     public List<TodoItem> TodoItems { get; set; } = new List<TodoItem>();
-    
+
 
     /********************************************/
     /***************** INIT *********************/
@@ -73,12 +153,14 @@
         var user = authState.User;
         Username = user.Identity.Name;
 
+
         // Verify user is logged in before checking whether they have a CPR submitted or not.
         if (user.Identity != null && user.Identity.IsAuthenticated)
         {
             var userCPR = await _todoDbContext.Cprs.FirstOrDefaultAsync(c => c.User == Username);
-            cprNumber = userCPR != null ? "******-" + userCPR.CprEnding : null;
-            hasCPR = await CheckUserCPRAsync(Username);
+            CprNumber = userCPR != null ? "******-" + userCPR.CprEnding : null;
+            Address = userCPR != null && userCPR.Address != null ? _encryptionHandler.ProtectorDecryptAsym(userCPR.Address) : null;
+            HasCPR = await CheckUserCPRAsync(Username);
             await GetTodoItemsAsync();
         }
 
@@ -87,6 +169,15 @@
     /********************************************/
     /****************  CRUD  ********************/
     /********************************************/
+
+    public async Task UpdateStatus(TodoItem item)
+    {
+        item.Status = _encryptionHandler.ProtectorEncrypt(Status);
+        _todoDbContext.TodoItems.Update(item);
+        await _todoDbContext.SaveChangesAsync();
+
+    }
+
     /// <summary>
     /// Deletes a given Todo Item from the list the user can see.
     /// </summary>
@@ -116,8 +207,7 @@
         bool areListEqual = hashSet1.SetEquals(hashSet2);
         if (areListEqual)
         {
-
-            var desc = EncrypItemName(todoDescription);
+            var desc = EncrypItemName(TodoName);
             var newTodo = new TodoItem { User = Username, Name = desc };
 
             _todoDbContext.TodoItems.Add(newTodo);
@@ -136,9 +226,9 @@
         var userCPR = await _todoDbContext.Cprs.FirstOrDefaultAsync(c => c.User == Username);
         _todoDbContext.Cprs.Remove(userCPR);
         _todoDbContext.SaveChanges();
-        hasCPR = false;
-        hashCPR = null;
-        cprNumber = null;
+        HasCPR = false;
+        HashCPR = null;
+        CprNumber = null;
 
 
     }
@@ -152,33 +242,49 @@
     public void AddCPR()
     {
         // Ensure CPR format is correct
-        if (!(!string.IsNullOrEmpty(cprNumber) && cprNumber.Contains("-") && cprNumber.Length == 11 && cprNumber.Split("-")[0].Length == 6 && cprNumber.Split("-")[1].Length == 4))
+        if (!(!string.IsNullOrEmpty(CprNumber) && CprNumber.Contains("-") && CprNumber.Length == 11 && CprNumber.Split("-")[0].Length == 6 && CprNumber.Split("-")[1].Length == 4))
         {
-            isFormatCorrect = false;
+            IsFormatCorrect = false;
             return;
         }
         else
         {
-            isFormatCorrect = true;
+            IsFormatCorrect = true;
 
-            var cpr_ending = cprNumber.Split("-")[1];
-
+            var cpr_ending = CprNumber.Split("-")[1];
             var salt = HashingExamples.RotateString(Username, Convert.ToInt16(cpr_ending));
+            string hashedCPR = HashingExamples.PBKHash(CprNumber, salt);
 
-            string hashedCPR = HashingExamples.PBKHash(cprNumber, salt);
+            var other_endings = _todoDbContext.Cprs.Where(x => x.CprEnding == cpr_ending);
+            if (other_endings != null)
+            {
+                foreach (var item in other_endings)
+                {
+                    var other_salt = HashingExamples.RotateString(item.User, Convert.ToInt16(cpr_ending));
+                    string other_hashedCPR = HashingExamples.PBKHash(CprNumber, other_salt);
+                    if (other_hashedCPR == item.Cpr1) 
+                    {
+                        IsUniqueCPR = false;
+                        return;
+                    }
 
-            var newCPR = new Cpr { User = Username, Cpr1 = hashedCPR, CprEnding = cpr_ending};
+                }
+            }
+            // Asymmetric encryption:
+            var encrypted_address = Address != null ? _encryptionHandler.ProtectorEncryptAsym(Address) : null;
+            var newCPR = new Cpr { User = Username, Cpr1 = hashedCPR, CprEnding = cpr_ending, Address = encrypted_address};
 
             _todoDbContext.Cprs.Add(newCPR);
             _todoDbContext.SaveChanges();
-            cprNumber = "******-" + cpr_ending;
-            hashCPR = hashedCPR;
-            hasCPR = true;
+            CprNumber = "******-" + cpr_ending;
+            HashCPR = hashedCPR;
+            HasCPR = true;
+            IsUniqueCPR = true;
 
 
         }
     }
-   
+
     /// <summary>
     /// Helper method for checking if User has a CPR
     /// </summary>
@@ -212,9 +318,9 @@
     /// <returns>Encrypted string</returns>
     private string DecryptItemName(string encryptedText)
     {
-        if (!string.IsNullOrEmpty(cprNumber) && cprNumber.Contains("-"))
+        if (!string.IsNullOrEmpty(CprNumber) && CprNumber.Contains("-"))
         {
-            var cpr_ending = cprNumber.Split("-")[1];
+            var cpr_ending = CprNumber.Split("-")[1];
             var key = HashingExamples.RotateString(Username, Convert.ToInt16(cpr_ending));
             return EncryptionExamples.Decrypt(encryptedText, key);
         }
@@ -233,9 +339,9 @@
     /// <returns></returns>
     private string EncrypItemName(string plainText)
     {
-        if (!string.IsNullOrEmpty(cprNumber) && cprNumber.Contains("-"))
+        if (!string.IsNullOrEmpty(CprNumber) && CprNumber.Contains("-"))
         {
-            var cpr_ending = cprNumber.Split("-")[1];
+            var cpr_ending = CprNumber.Split("-")[1];
             var key = HashingExamples.RotateString(Username, Convert.ToInt16(cpr_ending));
             return EncryptionExamples.Encrypt(plainText, key);
         }
