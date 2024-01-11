@@ -12,4 +12,6 @@ public partial class TodoItem
     public string Name { get; set; } = null!;
 
     public string? Status { get; set; }
+
+    public string Checksum { get; set; } = null!;
 }

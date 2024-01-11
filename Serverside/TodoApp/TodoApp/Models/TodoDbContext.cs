@@ -45,6 +45,7 @@ public partial class TodoDbContext : DbContext
             entity.ToTable("TodoItem");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Checksum).HasColumnName("checksum");
             entity.Property(e => e.Name).HasColumnName("name");
             entity.Property(e => e.Status).HasColumnName("status");
             entity.Property(e => e.User).HasColumnName("user");

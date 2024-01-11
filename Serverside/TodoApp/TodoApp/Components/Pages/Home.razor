@@ -76,7 +76,7 @@ I.e. a "family account" where family member 1, 2 and 3, can each have their own 
                 <label>Enter Address:</label>
                 <input type="text" id="addCreate" @bind="Address"/>
             </div>
-            <button @onclick="AddCPR">Submit</button>
+            <button @onclick="AddCPRAsync">Submit</button>
             <p hidden=@IsFormatCorrect>CPR format is incorrect!</p>
             <p hidden=@IsUniqueCPR>CPR already in use!</p>
         }
@@ -91,7 +91,8 @@ I.e. a "family account" where family member 1, 2 and 3, can each have their own 
                 <p>@Address</p>
             </div>
             <div>
-                <button @onclick="DeleteCPRAsync">Other Member</button>
+                <button @onclick="DeleteCPRAsync">Delete CPR</button>
+                <button @onclick="ChangeCPR">Change Member</button>
             </div>
             <br/>
             <br/>
@@ -102,7 +103,15 @@ I.e. a "family account" where family member 1, 2 and 3, can each have their own 
                 {
                     <div class="row mb-3" style="margin:5px">
                         <div class="col-md-2" style="background-color:lightgray;padding:5px">
-                            <span>@DecryptItemName(@item.Name)</span>
+                            <span>@if (HashCPR == @item.Checksum) 
+                                {
+                                    @DecryptItemName(@item.Name)
+                                }
+                                else
+                                {   
+                                    <p>*OBFUSCATED*</p>
+                                }
+                            </span>
                         </div>
                         <div class="col-md-2" style="padding:5px">
                             @if (item.Status != null) @_encryptionHandler.ProtectorDecrypt(@item.Status)
@@ -111,7 +120,7 @@ I.e. a "family account" where family member 1, 2 and 3, can each have their own 
                             <input type="text" @bind="Status" />
                         </div>
                         <div class="col-md-2" style="padding:5px">
-                            <button class="btn btn-info ml-2" @onclick="() => UpdateStatus(item)">Update Status</button>
+                            <button class="btn btn-info ml-2" @onclick="() => UpdateStatusAsync(item)">Update Status</button>
                         </div>
                         <div class="col-md-2" style="background-color:lightgray;padding:5px">
                             <button class="btn btn-danger ml-2" @onclick="() => DeleteTodoAsync(item)">Delete</button>
@@ -165,16 +174,23 @@ I.e. a "family account" where family member 1, 2 and 3, can each have their own 
         }
 
     }
-
+   
     /********************************************/
     /****************  CRUD  ********************/
     /********************************************/
 
-    public async Task UpdateStatus(TodoItem item)
+    /// <summary>
+    /// Updates the status for the item in question. Note we clear the field afterward, as all TodoItems have the "Status" field
+    /// But when the function is called, it only uses the specific TodoItem object, thus avoiding confounding changes.
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    public async Task UpdateStatusAsync(TodoItem item)
     {
         item.Status = _encryptionHandler.ProtectorEncrypt(Status);
         _todoDbContext.TodoItems.Update(item);
         await _todoDbContext.SaveChangesAsync();
+        Status = null;
 
     }
 
@@ -207,8 +223,8 @@ I.e. a "family account" where family member 1, 2 and 3, can each have their own 
         bool areListEqual = hashSet1.SetEquals(hashSet2);
         if (areListEqual)
         {
-            var desc = EncrypItemName(TodoName);
-            var newTodo = new TodoItem { User = Username, Name = desc };
+            var desc = EncryptItemName(TodoName);
+            var newTodo = new TodoItem { User = Username, Name = desc, Checksum = HashCPR };
 
             _todoDbContext.TodoItems.Add(newTodo);
             await _todoDbContext.SaveChangesAsync();
@@ -234,12 +250,22 @@ I.e. a "family account" where family member 1, 2 and 3, can each have their own 
     }
 
     /// <summary>
+    /// Here we exploit the flags in order to enable changing between CPRs for the user account.
+    /// </summary>
+    public void ChangeCPR()
+    {
+        HasCPR = false;
+        HashCPR = null;
+        CprNumber = null;
+    }
+
+    /// <summary>
     /// Validates CPR is in the correct format
     /// if so, uses the Username and a rotation cipher based on the last 4 CPR digits
     /// and uses this as salt
     /// Displays a semi-obfuscated version of the applied CPR; revealing the applicable data.
     /// </summary>
-    public void AddCPR()
+    public async Task AddCPRAsync()
     {
         // Ensure CPR format is correct
         if (!(!string.IsNullOrEmpty(CprNumber) && CprNumber.Contains("-") && CprNumber.Length == 11 && CprNumber.Split("-")[0].Length == 6 && CprNumber.Split("-")[1].Length == 4))
@@ -255,8 +281,8 @@ I.e. a "family account" where family member 1, 2 and 3, can each have their own 
             var salt = HashingExamples.RotateString(Username, Convert.ToInt16(cpr_ending));
             string hashedCPR = HashingExamples.PBKHash(CprNumber, salt);
 
-            var other_endings = _todoDbContext.Cprs.Where(x => x.CprEnding == cpr_ending);
-            if (other_endings != null)
+            var other_endings = _todoDbContext.Cprs.Where(x => x.CprEnding == cpr_ending && x.User != Username);
+            if (other_endings.Any())
             {
                 foreach (var item in other_endings)
                 {
@@ -270,12 +296,13 @@ I.e. a "family account" where family member 1, 2 and 3, can each have their own 
 
                 }
             }
+
             // Asymmetric encryption:
             var encrypted_address = Address != null ? _encryptionHandler.ProtectorEncryptAsym(Address) : null;
-            var newCPR = new Cpr { User = Username, Cpr1 = hashedCPR, CprEnding = cpr_ending, Address = encrypted_address};
-
-            _todoDbContext.Cprs.Add(newCPR);
-            _todoDbContext.SaveChanges();
+            var userCPR = new Cpr { Cpr1 = hashedCPR, CprEnding = cpr_ending, Address = encrypted_address, User = Username };
+            
+            _todoDbContext.Cprs.Add(userCPR);
+            await _todoDbContext.SaveChangesAsync();
             CprNumber = "******-" + cpr_ending;
             HashCPR = hashedCPR;
             HasCPR = true;
@@ -320,6 +347,7 @@ I.e. a "family account" where family member 1, 2 and 3, can each have their own 
     {
         if (!string.IsNullOrEmpty(CprNumber) && CprNumber.Contains("-"))
         {
+            
             var cpr_ending = CprNumber.Split("-")[1];
             var key = HashingExamples.RotateString(Username, Convert.ToInt16(cpr_ending));
             return EncryptionExamples.Decrypt(encryptedText, key);
@@ -328,6 +356,7 @@ I.e. a "family account" where family member 1, 2 and 3, can each have their own 
         {
             return encryptedText;
         }
+        
 
     }
 
@@ -337,10 +366,11 @@ I.e. a "family account" where family member 1, 2 and 3, can each have their own 
     /// </summary>
     /// <param name="plainText"></param>
     /// <returns></returns>
-    private string EncrypItemName(string plainText)
+    private string EncryptItemName(string plainText)
     {
         if (!string.IsNullOrEmpty(CprNumber) && CprNumber.Contains("-"))
         {
+            
             var cpr_ending = CprNumber.Split("-")[1];
             var key = HashingExamples.RotateString(Username, Convert.ToInt16(cpr_ending));
             return EncryptionExamples.Encrypt(plainText, key);
