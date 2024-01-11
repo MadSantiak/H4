@@ -174,7 +174,7 @@ I.e. a "family account" where family member 1, 2 and 3, can each have their own 
         }
 
     }
-   
+
     /********************************************/
     /****************  CRUD  ********************/
     /********************************************/
@@ -245,7 +245,7 @@ I.e. a "family account" where family member 1, 2 and 3, can each have their own 
         HasCPR = false;
         HashCPR = null;
         CprNumber = null;
-
+        Address = null;
 
     }
 
@@ -257,6 +257,7 @@ I.e. a "family account" where family member 1, 2 and 3, can each have their own 
         HasCPR = false;
         HashCPR = null;
         CprNumber = null;
+        Address = null;
     }
 
     /// <summary>
@@ -281,33 +282,58 @@ I.e. a "family account" where family member 1, 2 and 3, can each have their own 
             var salt = HashingExamples.RotateString(Username, Convert.ToInt16(cpr_ending));
             string hashedCPR = HashingExamples.PBKHash(CprNumber, salt);
 
+            // Check CPR isn't in use by another account.
             var other_endings = _todoDbContext.Cprs.Where(x => x.CprEnding == cpr_ending && x.User != Username);
-            if (other_endings.Any())
-            {
-                foreach (var item in other_endings)
-                {
-                    var other_salt = HashingExamples.RotateString(item.User, Convert.ToInt16(cpr_ending));
-                    string other_hashedCPR = HashingExamples.PBKHash(CprNumber, other_salt);
-                    if (other_hashedCPR == item.Cpr1) 
-                    {
-                        IsUniqueCPR = false;
-                        return;
-                    }
 
+            // We skip the if-else statement(s) here, seeing as if there were no results
+            // the iteration would simply not run.
+            // if there were, and a match is found, the function returns, avoiding checking for
+            // same CPR on same Account, and/or creating new CPR on same account.
+            foreach (var item in other_endings)
+            {
+                var other_salt = HashingExamples.RotateString(item.User, Convert.ToInt16(cpr_ending));
+                string other_hashedCPR = HashingExamples.PBKHash(CprNumber, other_salt);
+                if (other_hashedCPR == item.Cpr1) 
+                {
+                    IsUniqueCPR = false;
+                    return;
                 }
+
             }
 
-            // Asymmetric encryption:
+
+            // Avoid duplicates for the same account:
+            var self_endings = _todoDbContext.Cprs.Where(x => x.CprEnding == cpr_ending && x.User == Username);
+
+            foreach (var item in self_endings)
+            {
+                var other_salt = HashingExamples.RotateString(item.User, Convert.ToInt16(cpr_ending));
+                string other_hashedCPR = HashingExamples.PBKHash(CprNumber, other_salt);
+                if (other_hashedCPR == item.Cpr1)
+                {
+                    // Check if a new Address was supplied.
+                    item.Address = Address != null ? _encryptionHandler.ProtectorEncryptAsym(Address) : null; CprNumber = "******-" + cpr_ending;
+                    _todoDbContext.Cprs.Update(item);
+                    _todoDbContext.SaveChanges();
+                    HashCPR = hashedCPR;
+                    HasCPR = true;
+                    IsUniqueCPR = true;
+                    return;
+                }
+
+            }
+
+            // Asymmetric encryption of Address:
             var encrypted_address = Address != null ? _encryptionHandler.ProtectorEncryptAsym(Address) : null;
             var userCPR = new Cpr { Cpr1 = hashedCPR, CprEnding = cpr_ending, Address = encrypted_address, User = Username };
-            
+
             _todoDbContext.Cprs.Add(userCPR);
             await _todoDbContext.SaveChangesAsync();
             CprNumber = "******-" + cpr_ending;
             HashCPR = hashedCPR;
             HasCPR = true;
             IsUniqueCPR = true;
-
+            
 
         }
     }
