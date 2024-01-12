@@ -8,11 +8,11 @@ I.e. a "family account" where family member 1, 2 and 3, can each have their own 
 
 
 - Example of Encryptions:
--- Symmetrical:
---- Todo Name (custom)
-            - Todo Status (Protector)
-        - Asymmetrical:
-            - CPR Address
+  - Symmetrical:
+    - Todo Name (custom)
+    - Todo Status (Protector)
+  - Asymmetrical:
+    - CPR Address
     
     Example of Hashing:
         - CPR Number
