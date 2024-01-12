@@ -6,9 +6,10 @@ I.e. a "family account" where family member 1, 2 and 3, can each have their own 
 - One user (test@test.dk) can thus have ToDo items for Member A, B and C
 - But only when the CPR for Member A is applied, will ToDo items deobfuscate. ToDo items for B and C will remain obfuscated.
 
-    Example of Encryptions:
-        - Symmetrical:
-            - Todo Name (custom)
+
+- Example of Encryptions:
+-- Symmetrical:
+--- Todo Name (custom)
             - Todo Status (Protector)
         - Asymmetrical:
             - CPR Address
